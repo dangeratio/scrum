@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+
+{% block left %}
+<ul>
+    <li><a href="/projects/">Cancel</a></li>
+    <li><a href="/projects/delete/{{ project.id }}">Delete</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+
+{% if project.id %}
+    <h1>edit project</h1>
+    <form action="/projects/edit/{{ project.id }}" method="POST">
+
+{% else %}
+    <h1>add project</h1>
+    <form action="/projects/create/" method="POST">
+{% endif %}
+
+<table>
+
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+        <tr>
+            <td colspan="2">
+                {% for error in form.non_field_errors %}
+                {{ error }}
+                {% endfor %}
+            </td>
+        </tr>
+    {% endif %}
+    {% for field in form %}
+        <tr>
+            <td>
+                {{ field.help_text }}
+                {{ field.label_tag }}
+            </td>
+            <td>
+                {{ field }}
+                {{ field.errors }}
+            </td>
+        </tr>
+    {% endfor %}
+
+    <tr><td></td><td>
+        <input id="save_project" class="submit nothover" type="submit" value="Save" />
+    </td></tr>
+</table>
+
+</form>
+
+{% endblock %}

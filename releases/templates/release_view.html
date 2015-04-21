@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block pagetitle %}scrum - release view{% endblock %}
+{% block title %}release view{% endblock %}
+
+{% block content %}
+
+<div class="panel panel-primary">
+
+<!--<div class="list-group">-->
+    <div class="panel-heading">{{ release.title }}</div>
+    <div class="list-group-item"><p>number:</p>{{ release.number }}</div>
+    <div class="list-group-item"><p>start date:</p>{{ release.start_date }}</div>
+    <div class="list-group-item"><p>release date:</p>{{ release.release_date }}</div>
+    <div class="list-group-item"><p>status:</p>{{ release.status }}</div>
+    <div class="list-group-item"><p>detail:</p>{{ release.detail|safe|linebreaks }}</div>
+</div>
+
+<div class="btn-group" role="group">
+    <a class="btn btn-lg btn-warning" href="/releases/">Back</a>
+    <a class="btn btn-lg btn-default" href="/releases/edit/{{ release.id }}">Edit Release</a>
+    <a class="btn btn-lg btn-danger" href="/releases/delete/{{ release.id }}">Delete Release</a>
+</div>
+
+{% endblock %}

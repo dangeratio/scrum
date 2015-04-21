@@ -1,0 +1,12 @@
+# static files ignores
+
+/static/static_root/
+
+# ignore database file
+
+*.db
+db.*
+
+# ignore IDE files
+
+/.idea

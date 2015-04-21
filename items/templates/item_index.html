@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block pagetitle %}scrum - project index{% endblock %}
+{% block title %}project index{% endblock %}
+
+{% block content %}
+
+<h1>Projects</h1>
+<ul class="list-group">
+
+    {% for project in object_list %}
+        <li class="list-group-item">
+        <a href="/projects/view/{{ project.id }}">
+            {{ project.title }}
+        </a>
+        <span class="badge">123</span>
+        <a href="/projects/edit/{{project.id}}" style="color:white;"><span class="badge"><i class="fa fa-cog fa-fw"></i></span></a>
+        </li>
+
+    {% endfor %}
+</ul>
+
+{% endblock %}

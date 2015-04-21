@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block pagetitle %}scrum - release index{% endblock %}
+{% block title %}release index{% endblock %}
+
+{% block content %}
+
+<h1>Releases</h1>
+<ul class="list-group">
+
+    {% for release in object_list %}
+        <li class="list-group-item">
+        <a href="/releases/view/{{ release.id }}">
+            {{ release.title }}
+        </a>
+        <span class="badge">123</span>
+        &nbsp;<a href="/releases/edit/{{release.id}}" style="color:grey;"><i class="fa fa-cog fa-fw"></i></a>
+        </li>
+
+    {% endfor %}
+</ul>
+
+{% endblock %}
