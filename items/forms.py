@@ -1,25 +1,16 @@
 from django import forms
-from models import Release
+from models import Item
 
 
-class ReleaseForm(forms.ModelForm):
+class ItemForm(forms.ModelForm):
 
     class Meta:
-        model = Release
+        model = Item
 
         fields = '__all__'
-
-        '''
-        fields = (
-            'title',
-            'detail',
-            'number',
-            'status',
-            'start_date',
-            'release_date',
-            'project_id',
+        exclude = (
+            'key',
         )
-        '''
 
 
 # for custom select widget

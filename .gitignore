@@ -10,3 +10,16 @@ db.*
 # ignore IDE files
 
 /.idea
+
+# publicly available libraries
+
+bootstrap-theme.min.css
+bootstrap.min.css
+bootstrap.min.js
+font-awesome.min.css
+
+# migrations files
+
+/projects/migrations/
+/releases/migrations/
+/items/migrations/

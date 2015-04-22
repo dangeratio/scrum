@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.views.generic import ListView
 
 from releases.models import Release
-from releases.views import ReleaseDetail, ReleaseIndex, ReleaseUpdate
+from releases.views import ReleaseDetail, ReleaseCreate, ReleaseUpdate
 
 
 urlpatterns = [
@@ -16,7 +16,7 @@ urlpatterns = [
         template_name='release_index.html'
     )),
     url(r'^view/(?P<pk>\d+)/$', ReleaseDetail.as_view(template_name='release_view.html')),
-    url(r'^create/$', ReleaseIndex.as_view(template_name='release_edit.html')),
+    url(r'^create/$', ReleaseCreate.as_view(template_name='release_edit.html')),
     url(r'^edit/(?P<pk>\d+)$', ReleaseUpdate.as_view(template_name='release_edit.html')),
     url(r'^delete/(?P<pk>\d+)$', 'releases.views.delete'),
 

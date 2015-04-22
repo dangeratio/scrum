@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from releases.models import Release
 
 
 class Item(models.Model):
@@ -48,11 +49,28 @@ class Item(models.Model):
     priority = models.IntegerField(choices=PRIORITY_CHOICES,
                                    default=MED)
     effort = models.IntegerField(choices=EFFORT_CHOICES,
-                                 default=DAY)
-    # sprint = models.ForeignKey(Release, db_column='title')
+                                 default=DAY,
+                                 blank=True,
+                                 null=True,
+                                 )
+    sprint = models.ForeignKey(Release,
+                               db_tablespace='releases',
+                               db_constraint=False,
+                               blank=True,
+                               null=True,
+                               )
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    date_started = models.DateTimeField()
-    date_completed = models.DateTimeField()
-    owner = models.ForeignKey(User, db_column='username')
+    date_started = models.DateTimeField(blank=True,
+                                        null=True,)
+    date_completed = models.DateTimeField(blank=True,
+                                          null=True,)
+    owner = models.ForeignKey(User,
+                              db_constraint=False,
+                              blank=True,
+                              null=True,
+                              )
     # submitter = models.ForeignKey(User, db_column='username')
+
+    def __unicode__(self):
+        return self.title

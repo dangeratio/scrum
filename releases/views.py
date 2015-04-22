@@ -6,11 +6,12 @@ from django import http
 
 from releases.models import Release
 from releases import forms
-
+from projects.models import Project
 
 class ReleaseDetail(DetailView):
 
     model = Release
+
     # template_name = 'view.html'
 
     def get_context_data(self, **kwargs):
@@ -19,7 +20,7 @@ class ReleaseDetail(DetailView):
         return context
 
 
-class ReleaseIndex(CreateView):
+class ReleaseCreate(CreateView):
 
     model = Release
     # template_name = 'edit.html'

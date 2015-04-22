@@ -6,17 +6,13 @@
 {% block content %}
 
 <h1>Projects</h1>
-<ul class="list-group">
+<div class="list-group">
 
     {% for project in object_list %}
-        <li class="list-group-item">
-        <a href="/projects/view/{{ project.id }}">
+        <a class="list-group-item" href="/projects/view/{{ project.id }}">
             {{ project.title }}
-        </a>
         <span class="badge">123</span>
-        &nbsp;<a href="/releases/edit/{{release.id}}" style="color:grey;"><i class="fa fa-cog fa-fw"></i></a>
-        </li>
-
+        </a>
     {% endfor %}
 </ul>
 

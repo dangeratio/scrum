@@ -1,5 +1,8 @@
-from django.conf.urls import include, url
-from django.contrib import admin
+from django.conf.urls import url
+from django.views.generic import ListView, DetailView
+from items.models import Item
+from items.views import ItemDetail, ItemCreate, ItemUpdate
+
 
 urlpatterns = [
     # Examples:
@@ -7,10 +10,14 @@ urlpatterns = [
     # url(r'^blog/', include('blog.urls')),
 
 
-    #url(r'^$', 'items.views.index'),
-    #url(r'^create/', 'items.views.create'),
-    #url(r'^view/(?P<items_id>\d+)/$', 'items.views.view'),
-    #url(r'^edit/(?P<items_id>\d+)/$', 'items.views.edit'),
-    #url(r'^delete/(?P<items_id>\d+)/$', 'items.views.delete'),
+    url(r'^$', ListView.as_view(
+        queryset=Item.objects.all(),     # .order_by("-created")
+        template_name='item_index.html'
+    )),
+    url(r'^view/(?P<pk>\d+)/$', ItemDetail.as_view(template_name='item_view.html')),
+    url(r'^create/$', ItemCreate.as_view(template_name='item_edit.html')),
+    url(r'^edit/(?P<pk>\d+)$', ItemUpdate.as_view(template_name='item_edit.html')),
+    url(r'^delete/(?P<pk>\d+)$', 'items.views.delete'),
 
 ]
+

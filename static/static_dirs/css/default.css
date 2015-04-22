@@ -14,18 +14,18 @@
 
 
 #page {
-    width: 900px;
+    width: 1040px;
     text-align: center;
     margin: 10px auto 20px auto;
     background-color: #fff;
 }
 
 #title {
-    width: 900px;
+    width: 1040px;
     text-align: center;
     margin: 10px auto 20px auto;
     background-color: #fff;
-    /* border-bottom: 1px solid #000; */
+    border-bottom: 1px solid #000;
 }
 
 #left {
@@ -36,13 +36,20 @@
     margin-left: 10px;
     margin-right: 10px;
 
-    /* padding: 5px; */
-    /* padding-top: 20px; */
-}
-
-#left {
     list-style: none outside none;
     vertical-align: middle;
+}
+
+.fill-h {
+    width:100%;
+}
+
+#right {
+    float: right;
+    margin-right: 10px;
+    margin-left: 10px;
+    width: 200px;
+    text-align: left;
 }
 
 .pad10 {
@@ -63,24 +70,8 @@ h1 {
     text-align: left;
     float: left;
     width: 600px;
-    /* border-top: 1px solid #000; */
-    /* padding: 10px 10px 20px 10px; */
 
 }
-
-/*
-
-#content form label, #content form input, #content form select {
-    margin: 10px 10px 10px 0px;
-    padding: 5px;
-    font-size: 1em;
-}
-
-#content form label {
-    font-size: 1.3em;
-}
-
-*/
 
 legend {
     display:none;
@@ -92,37 +83,21 @@ fieldset {
     margin: 0px;
 }
 
-
-
-/*
-input.submit {
-    width: 100%;
-    height: 2em;
-    border: 1px;
-    border-radius: 5px;
-    moz-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
+.padding-bottom-20 {
+    padding-bottom: 20px;
 }
 
-.nothover {
-    background: lightgrey;
+.padding-top-10 {
+    padding-top:10px;
 }
 
-.hover {
-   background: grey;
-}
-
-.selectnormal {
-    background: #fff;
+.noborder-fix {
     border: 0px;
-    overflow: hidden;
+    box-shadow: none;
+    padding: 0px;
+    width: auto;
 }
 
-.selecthover {
-    background: #fff;
-    overflow: hidden;
+.full-width {
+    width:100%;
 }
-
-
-*/

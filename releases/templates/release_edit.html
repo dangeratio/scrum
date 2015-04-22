@@ -11,11 +11,10 @@
 {% endblock %}
 
 {% block left %}
-<div class="btn-group-vertical" role="group">
+<div class="btn-group-vertical fill-h padding-bottom-20" role="group">
     <a class="btn btn-lg btn-warning" href="/releases/"><i class="fa fa-times"></i> Cancel</a>
     {% if release.id %}<a class="btn btn-lg btn-danger" href="/releases/delete/{{ release.id }}"><i class="fa fa-trash-o"></i> Delete</a>{% endif %}
 </div>
-
 {% endblock %}
 
 

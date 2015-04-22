@@ -12,8 +12,14 @@ class Project(models.Model):
     title = models.CharField(max_length=200)
     detail = models.TextField()
     key_title = models.CharField(max_length=5)
-    owner = models.ForeignKey(User, db_column='username')
+    owner = models.ForeignKey(User, db_column='username',
+                              db_constraint=False,
+                              blank=True,
+                              null=True,
+                              )
 
+    def __unicode__(self):
+        return self.title
 
 
 

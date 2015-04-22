@@ -14,9 +14,14 @@
 </div>
 
 <div class="btn-group" role="group">
+</div>
+
+{% endblock %}
+
+{% block left %}
+<div class="btn-group-vertical fill-h padding-bottom-20" role="group">
     <a class="btn btn-lg btn-warning" href="/projects/">Back</a>
     <a class="btn btn-lg btn-default" href="/projects/edit/{{ project.id }}">Edit Project</a>
     <a class="btn btn-lg btn-danger" href="/projects/delete/{{ project.id }}" aria-disabled="true">Delete Project</a>
 </div>
-
 {% endblock %}

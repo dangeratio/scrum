@@ -1,48 +1,50 @@
+<!DOCTYPE html>
+
 {% load static %}
 
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+
     <title>{% block pagetitle %}scrum{% endblock %}</title>
 
-    <!-- Fontawesome -->
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <!-- css/js ordering: font awesome css, bootstrap css, jquery 2.1.3 js, local jquery js, local css, bootstrap theme css, bootstrap js -->
 
-    <!-- Bootstrap -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+    <script type="text/javascript" src="{% static 'js/jquery-2.1.3.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/default.css' %}">
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-
-    <script src="{% static 'js/jquery-2.1.3.min.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/jquery.js' %}" type="text/javascript"></script>
-
-    <link rel="stylesheet" type="text/css" href="{% static 'css/default.css' %}">
-
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
 </head>
 <body>
 <div id="page">
 
     <div id="title">
-        {% block title %}
-        <p>scrum</p>
-        {% endblock %}
+        {% block title %}scrum{% endblock %}
     </div>
 
     <div id='left'>
 
-        {% block left %}
-
-        <div class="btn-group-vertical" role="group">
+        <div class="btn-group-vertical fill-h padding-bottom-20" role="group">
             <a class="btn btn-lg btn-default" href="/projects/">Projects</a>
             <a class="btn btn-lg btn-default" href="/releases/">Releases</a>
             <a class="btn btn-lg btn-default" href="/items/">Items</a>
 
-            <a class="btn btn-lg btn-success" href="/projects/create/"><i class="fa fa-lg fa-plus fa-fw"></i>New Project</a>
-            <a class="btn btn-lg btn-success" href="/releases/create/"><i class="fa fa-lg fa-plus fa-fw"></i>New Release</a>
-            <a class="btn btn-lg btn-success" href="/items/create/"><i class="fa fa-lg fa-plus fa-fw"></i>New Item</a>
+            <a class="btn btn-lg btn-success" href="/projects/create/"><i class="fa fa-plus fa-fw"></i>New Project</a>
+            <a class="btn btn-lg btn-success" href="/releases/create/"><i class="fa fa-plus fa-fw"></i>New Release</a>
+            <a class="btn btn-lg btn-success" href="/items/create/"><i class="fa fa-plus fa-fw"></i>New Item</a>
+
         </div>
 
+        {% block left %}
+
         {% endblock %}
+
 
     </div>
 
@@ -51,6 +53,13 @@
 
         {% endblock %}
     </div>
+
+    <div id='right'>
+        {% block right %}
+
+        {% endblock %}
+    </div>
+
 </div>
 </body>
 </html>

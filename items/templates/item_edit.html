@@ -3,30 +3,28 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-{% if project.id %}
-    scrum - edit project
+{% if item.id %}
+    scrum - edit item
 {% else %}
-    scrum - create project
+    scrum - create item
 {% endif %}
 {% endblock %}
 
 {% block left %}
-<div class="btn-group-vertical" role="group">
-    <a class="btn btn-lg btn-warning" href="/projects/"><i class="fa fa-times"></i> Cancel</a>
-    {% if project.id %}<a class="btn btn-lg btn-danger" href="/projects/delete/{{ project.id }}"><i class="fa fa-trash-o"></i> Delete</a>{% endif %}
+<div class="btn-group-vertical fill-h padding-bottom-20" role="group">
+    <a class="btn btn-lg btn-warning" href="/items/"><i class="fa fa-times"></i> Cancel</a>
+    {% if item.id %}<a class="btn btn-lg btn-danger" href="/items/delete/{{ item.id }}"><i class="fa fa-trash-o"></i> Delete</a>{% endif %}
 </div>
-
 {% endblock %}
 
 
 {% block content %}
 
-    <form action="{% if project.id %}/projects/edit/{{ project.id }}{% else %}/projects/create/{% endif %}" method="POST">
+    <form action="{% if item.id %}/items/edit/{{ item.id }}{% else %}/items/create/{% endif %}" method="POST">
     {% csrf_token %}
 
-
     <div class="panel panel-primary">
-        <div class="panel-heading">edit project</div>
+        <div class="panel-heading">edit item</div>
         <table class="list-group">
             {% for field in form %}
             <div class="list-group-item">
@@ -39,7 +37,10 @@
                 {% endif %}
             </div>
             {% endfor %}
-            <button type="submit" class="btn btn-lg btn-success list-group-item" style="width:100%"><i class="fa fa-check"></i> Submit</button>
+            <div class="list-group-item">
+                <button type="submit" class="btn btn-lg btn-success" name="submit"><i class="fa fa-check"></i> Submit</button>
+                <button type="submit" class="btn btn-lg btn-success" name="submit_and_add"><i class="fa fa-check"></i> Submit and Add New</button>
+            </div>
         </table>
     </div>
 

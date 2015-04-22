@@ -1,22 +1,35 @@
 {% extends "base.html" %}
 
-{% block pagetitle %}scrum - project view{% endblock %}
-{% block title %}project view{% endblock %}
+{% block pagetitle %}scrum - item view{% endblock %}
+{% block title %}item view{% endblock %}
 
 {% block content %}
 
-<div class="panel panel-primary">
-
-<!--<div class="list-group">-->
-    <div class="panel-heading">{{ project.title }}</div>
-    <div class="list-group-item">{{ project.detail|safe|linebreaks }}</div>
-    <div class="list-group-item">owner: {{ project.owner }}</div>
+<div class="panel panel-primary fill-h">
+    <div class="panel-heading">{{ item.title }}</div>
+    <div class="list-group-item">{{ item.detail|safe|linebreaks }}</div>
+    <div class="list-group-item">type: {{ item.type }}</div>
+    <div class="list-group-item">priority: {{ item.type }}</div>
+    <div class="list-group-item">effort: {{ item.effort }}</div>
+    <div class="list-group-item">sprint: {{ item.sprint }}</div>
+    <div class="list-group-item">status: {{ item.status }}</div>
+    <!--<div class="list-group-item">project: {{ item.type }}</div>-->
+    <div class="list-group-item">owner: {{ item.owner }}</div>
 </div>
 
 <div class="btn-group" role="group">
-    <a class="btn btn-lg btn-warning" href="/projects/">Back</a>
-    <a class="btn btn-lg btn-default" href="/projects/edit/{{ project.id }}">Edit Project</a>
-    <a class="btn btn-lg btn-danger" href="/projects/delete/{{ project.id }}" aria-disabled="true">Delete Project</a>
+    <a class="btn btn-lg btn-warning" href="/items/">Back</a>
+    <a class="btn btn-lg btn-default" href="/items/edit/{{ item.id }}">Edit item</a>
+    <a class="btn btn-lg btn-danger" href="/items/delete/{{ item.id }}" aria-disabled="true">Delete item</a>
 </div>
 
+{% endblock %}
+
+{% block right %}
+<div class="panel panel-primary fill-h">
+    <div class="list-group-item">created:<br> {{ item.date_created }}</div>
+    <div class="list-group-item">modified:<br> {{ item.date_modified }}</div>
+    <div class="list-group-item">start:<br> {{ item.date_start }}</div>
+    <div class="list-group-item">completed:<br> {{ item.date_complete }}</div>
+</div>
 {% endblock %}

@@ -13,8 +13,10 @@ class Release(models.Model):
     IN_PROGRESS = 'In Progress'
     RESOLVED = 'Resolved'
     CLOSED = 'Closed'
+    NEW = 'New'
 
     STATUS_CHOICES = (
+        (NEW, 'New'),
         (OPEN, 'Open'),
         (IN_PROGRESS, 'In Progress'),
         (RESOLVED, 'Resolved'),
@@ -23,11 +25,13 @@ class Release(models.Model):
 
     number = models.FloatField(default='')
     title = models.CharField(max_length=200)
-    status = models.CharField(max_length=1,
+    status = models.CharField(max_length=20,
                               choices=STATUS_CHOICES,
-                              default=OPEN)
+                              default=OPEN,)
     detail = models.TextField(default='')
     start_date = models.DateTimeField(auto_now_add=True)
     release_date = models.DateTimeField(default='')
     project_id = models.ForeignKey(Project)
 
+    def __unicode__(self):
+        return self.title
