@@ -7,7 +7,7 @@
 
 <div class="panel panel-primary fill-h">
     <div class="panel-heading">{{ item.title }}</div>
-    <div class="list-group-item">{{ item.detail|safe|linebreaks }}</div>
+    <div class="list-group-item"><div class="p-no-margin">{{ item.detail|linebreaks }}</div></div>
     <div class="list-group-item">type: {{ item.type }}</div>
     <div class="list-group-item">priority: {{ item.type }}</div>
     <div class="list-group-item">effort: {{ item.effort }}</div>
@@ -17,7 +17,10 @@
     <div class="list-group-item">owner: {{ item.owner }}</div>
 </div>
 
-<div class="btn-group" role="group">
+{% endblock %}
+
+{% block left %}
+<div class="btn-group-vertical fill-h padding-bottom-20" role="group">
     <a class="btn btn-lg btn-warning" href="/items/">Back</a>
     <a class="btn btn-lg btn-default" href="/items/edit/{{ item.id }}">Edit item</a>
     <a class="btn btn-lg btn-danger" href="/items/delete/{{ item.id }}" aria-disabled="true">Delete item</a>

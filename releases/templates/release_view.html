@@ -16,7 +16,11 @@
     <div class="list-group-item"><p>detail:</p>{{ release.detail|safe|linebreaks }}</div>
 </div>
 
-<div class="btn-group" role="group">
+{% endblock %}
+
+{% block left %}
+
+<div class="btn-group-vertical fill-h padding-bottom-20" role="group">
     <a class="btn btn-lg btn-warning" href="/releases/">Back</a>
     <a class="btn btn-lg btn-default" href="/releases/edit/{{ release.id }}">Edit Release</a>
     <a class="btn btn-lg btn-danger" href="/releases/delete/{{ release.id }}">Delete Release</a>

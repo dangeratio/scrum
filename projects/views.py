@@ -15,7 +15,6 @@ class ProjectIndex(ListView):
     model = Project
 
 
-
 class ProjectDetail(DetailView):
 
     model = Project

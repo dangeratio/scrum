@@ -101,3 +101,7 @@ fieldset {
 .full-width {
     width:100%;
 }
+
+.p-no-margin p {
+    margin: 0px;
+}

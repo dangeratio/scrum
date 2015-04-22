@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load crispy_forms_tags %}
+{% load bootstrap3 %}
 
 {% block title %}
 {% if item.id %}
@@ -25,23 +26,15 @@
 
     <div class="panel panel-primary">
         <div class="panel-heading">edit item</div>
-        <table class="list-group">
-            {% for field in form %}
-            <div class="list-group-item">
-                <div>{{ field.label|lower }}</div>
-                <div>{{ field }}</div>
-                {% if field.errors %}
-                    {% for error in  field.errors %}
-                        <div class="alert alert-danger" role="alert">{{ error }}</div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-            {% endfor %}
-            <div class="list-group-item">
-                <button type="submit" class="btn btn-lg btn-success" name="submit"><i class="fa fa-check"></i> Submit</button>
-                <button type="submit" class="btn btn-lg btn-success" name="submit_and_add"><i class="fa fa-check"></i> Submit and Add New</button>
-            </div>
-        </table>
+        {% for field in form %}
+        <div class="list-group-item">
+            {% bootstrap_field field %}
+        </div>
+        {% endfor %}
+        <div class="list-group-item">
+            <button type="submit" class="btn btn-lg btn-success" name="submit"><i class="fa fa-check"></i> Submit</button>
+            <button type="submit" class="btn btn-lg btn-success" name="submit_and_add"><i class="fa fa-check"></i> Submit and Add New</button>
+        </div>
     </div>
 
     </form>

@@ -15,6 +15,8 @@ class Release(models.Model):
     CLOSED = 'Closed'
     NEW = 'New'
 
+    STATUSES = (OPEN, IN_PROGRESS, RESOLVED, CLOSED, NEW)
+
     STATUS_CHOICES = (
         (NEW, 'New'),
         (OPEN, 'Open'),
