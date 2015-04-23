@@ -35,5 +35,7 @@ class Release(models.Model):
     release_date = models.DateTimeField(default='')
     project_id = models.ForeignKey(Project)
 
+    total_items = models.IntegerField(default=0)
+
     def __unicode__(self):
         return self.title

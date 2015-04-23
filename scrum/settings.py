@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crispy_forms',
+    # 'crispy_forms',
     'bootstrap3',
     'projects',
     'releases',
@@ -123,5 +123,4 @@ LOGIN_REDIRECT_URL = reverse_lazy('projects')
 LOGOUT_URL = reverse_lazy('logout')
 
 # forms front end
-
-CRISPY_TEMPLATE_PACK = 'bootstrap'
+# CRISPY_TEMPLATE_PACK = 'bootstrap'

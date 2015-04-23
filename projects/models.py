@@ -17,6 +17,8 @@ class Project(models.Model):
                               blank=True,
                               null=True,
                               )
+    total_releases = models.IntegerField(default=0)
+    total_items = models.IntegerField(default=0)
 
     def __unicode__(self):
         return self.title

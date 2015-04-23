@@ -189,7 +189,7 @@ class ReleaseForm(forms.ModelForm):
                                     required=True,
                                     )
     '''
-    
+
     class Meta:
         model = Release
 
