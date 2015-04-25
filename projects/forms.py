@@ -98,11 +98,13 @@ class SelectWidgetBootstrap(forms.Select):
 
 class ProjectForm(forms.ModelForm):
 
+    '''
     owner = forms.ModelChoiceField(User.objects.all(),
                                    widget=SelectWidgetBootstrap(),
                                    empty_label=u'None',
                                    required=False,
                                    )
+    '''
 
     class Meta:
         model = Project

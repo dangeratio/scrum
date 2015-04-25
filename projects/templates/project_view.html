@@ -3,6 +3,14 @@
 {% block pagetitle %}scrum - project view{% endblock %}
 {% block title %}project view{% endblock %}
 
+{% block left %}
+<div class="btn-group-vertical fill-h padding-bottom-20" role="group">
+    <a class="btn btn-lg btn-warning" href="/projects/">Back</a>
+    <a class="btn btn-lg btn-default" href="/projects/edit/{{ project.id }}">Edit Project</a>
+    <a class="btn btn-lg btn-danger" href="/projects/delete/{{ project.id }}" aria-disabled="true">Delete Project</a>
+</div>
+{% endblock %}
+
 {% block content %}
 
 <div class="panel panel-primary">
@@ -13,15 +21,10 @@
     <div class="list-group-item">owner: {{ project.owner }}</div>
 </div>
 
-<div class="btn-group" role="group">
-</div>
+{% for release in releases %}
 
-{% endblock %}
 
-{% block left %}
-<div class="btn-group-vertical fill-h padding-bottom-20" role="group">
-    <a class="btn btn-lg btn-warning" href="/projects/">Back</a>
-    <a class="btn btn-lg btn-default" href="/projects/edit/{{ project.id }}">Edit Project</a>
-    <a class="btn btn-lg btn-danger" href="/projects/delete/{{ project.id }}" aria-disabled="true">Delete Project</a>
-</div>
+
+{% endfor %}
+
 {% endblock %}

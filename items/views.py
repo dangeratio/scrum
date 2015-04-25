@@ -56,6 +56,7 @@ def delete(request, pk):
     return http.HttpResponseRedirect('/items/')
 
 
+# usage: raise CustomError('asdf')
 class CustomError(Exception):
 
     def __init__(self, msg="Something went wrong."):

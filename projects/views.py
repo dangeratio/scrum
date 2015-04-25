@@ -14,18 +14,71 @@ from releases.models import Release
 from items.models import Item
 
 
+# usage: raise CustomError('asdf')
+class CustomError(Exception):
+
+    def __init__(self, msg="Something went wrong."):
+        self.msg = msg
+
+    def __str__(self):
+        return repr(self.msg)
+
+
 class ProjectIndex(ListView):
     model = Project
-    template_name='project_index.html'
+    template_name = 'project_index.html'
+
+    releases = Release.objects.all()
+    items = Item.objects.all()
+
+    '''
+    item_count = []
+
+    for project in Project.objects.all():
+        # for each project: count items
+        # raise CustomError(project.id)
+        item_count[project.id] = Item.objects.filter(sprint_id__project__id=project.id)
+    '''
+
+    '''
+    contest = Contest.objects.get(pk=contest_id)
+    votes   = contest.votes_set.select_related()
+
+    vote_counts = {}
+
+    for vote in votes:
+      if not vote_counts.has_key(vote.item.id):
+        vote_counts[vote.item.id] = {
+          'item': vote.item,
+          'count': 0
+        }
+
+      vote_counts[vote.item.id]['count'] += 1
+    '''
+
+    '''
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(initial=self.initial)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            # <process form cleaned data>
+            return HttpResponseRedirect('/success/')
+
+        return render_to_response(request, self.template_name, {'form': form})
+    '''
+
 
 class ProjectDetail(DetailView):
     model = Project
-    template_name='project_view.html'
+    template_name = 'project_view.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ProjectDetail, self).get_context_data(**kwargs)
-        context['now'] = timezone.now()
-        return context
+        cont = super(ProjectDetail, self).get_context_data(**kwargs)
+        cont['now'] = timezone.now()
+        return cont
 
 
 class ProjectCreate(CreateView):
@@ -66,6 +119,7 @@ register = template.Library()
 @register.filter('field_class')
 def field_class(ob):
     return ob.__class__.__name__
+
 
 
 
