@@ -13,7 +13,7 @@
 {% block left %}
 <div class="btn-group-vertical fill-h padding-bottom-20" role="group">
     <a class="btn btn-lg btn-warning" href="/projects/"><i class="fa fa-times"></i> Cancel</a>
-    {% if project.id %}<a class="btn btn-lg btn-danger" href="/projects/delete/{{ project.id }}"><i class="fa fa-trash-o"></i> Delete</a>{% endif %}
+    {% if project.id %}<a class="btn btn-lg btn-danger" href="/projects/{{ project.id }}delete/"><i class="fa fa-trash-o"></i> Delete</a>{% endif %}
 </div>
 {% endblock %}
 
@@ -29,7 +29,7 @@
 
     <div class="panel panel-primary">
         <div class="panel-heading">
-            edit project
+            {% if project.id %}edit project{% else %}create project{% endif %}
         </div>
 
         {% for field in form %}

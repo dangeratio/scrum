@@ -1,21 +1,19 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView
-from django.utils import timezone
 from django import http
+from django.utils import timezone
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import context
 
 
-from projects.models import Project
+from projects.models import Project, Release, Item
 from projects import forms
-from releases.models import Release
-from items.models import Item
 
 
-# usage: raise CustomError('asdf')
-class CustomError(Exception):
+# usage: raise DebugMessage('asdf')
+class DebugMessage(Exception):
 
     def __init__(self, msg="Something went wrong."):
         self.msg = msg
@@ -24,61 +22,27 @@ class CustomError(Exception):
         return repr(self.msg)
 
 
+#
+#   Projects
+#
+
+
 class ProjectIndex(ListView):
     model = Project
     template_name = 'project_index.html'
-
-    releases = Release.objects.all()
-    items = Item.objects.all()
-
-    '''
-    item_count = []
-
-    for project in Project.objects.all():
-        # for each project: count items
-        # raise CustomError(project.id)
-        item_count[project.id] = Item.objects.filter(sprint_id__project__id=project.id)
-    '''
-
-    '''
-    contest = Contest.objects.get(pk=contest_id)
-    votes   = contest.votes_set.select_related()
-
-    vote_counts = {}
-
-    for vote in votes:
-      if not vote_counts.has_key(vote.item.id):
-        vote_counts[vote.item.id] = {
-          'item': vote.item,
-          'count': 0
-        }
-
-      vote_counts[vote.item.id]['count'] += 1
-    '''
-
-    '''
-    def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            # <process form cleaned data>
-            return HttpResponseRedirect('/success/')
-
-        return render_to_response(request, self.template_name, {'form': form})
-    '''
 
 
 class ProjectDetail(DetailView):
     model = Project
     template_name = 'project_view.html'
+    slug_field = 'project_id'
 
     def get_context_data(self, **kwargs):
-        cont = super(ProjectDetail, self).get_context_data(**kwargs)
-        cont['now'] = timezone.now()
-        return cont
+        context = super(ProjectDetail, self).get_context_data(**kwargs)
+        project_id = self.kwargs['pk']
+        releases = Release.objects.filter(project=project_id)
+        context['releases'] = releases
+        return context
 
 
 class ProjectCreate(CreateView):
@@ -87,30 +51,167 @@ class ProjectCreate(CreateView):
     form_class = forms.ProjectForm
     success_url = '/projects/'
 
+    def post(self, request, *args, **kwargs):
+        # create the project object and save it
+
+
+        # create a "backlog" release to start out with
+
+
+        # get project id for success url to redirect to the view of the project you just created
+        project_id = ''
+        self.success_url = '/projects/project_id'.replace("project_id", project_id)
+        return super(ProjectCreate, self).post(request, *args, **kwargs)
+
 
 class ProjectUpdate(UpdateView):
     model = Project
     template_name = 'project_edit.html'
     form_class = forms.ProjectForm
     success_url = '/projects/'
+    slug_field = 'project_id'
 
 
-def delete(request, pk):
-    Project.objects.filter(id=pk).delete()
+def project_delete(request, pk):
+    Project.objects.filter(pk=pk).delete()
+    slug_field = 'project_id'
     return http.HttpResponseRedirect('/projects/')
 
 
-'''
-def create(request):
-    if request.method == 'POST':
-        form = ProjectCreate.as_view()
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/projects/')
+#
+#   Releases
+#
 
-    # return render_to_response('project_edit.html', locals(), context_instance=context.RequestContext(request))
-    return ProjectCreate.as_view()
-'''
+
+class ReleaseIndex(ListView):
+    model = Release
+    template_name = 'release_index.html'
+
+    def get_queryset(self):
+        object_list = Release.objects.all()     # (project__id=self.kwargs['project_id'])
+        return object_list
+
+
+class ReleaseDetail(DetailView):
+
+    model = Release
+
+    def get_context_data(self, **kwargs):
+        context = super(ReleaseDetail, self).get_context_data(**kwargs)
+        project_id = self.kwargs.get('project_id')
+        release_id = self.kwargs.get('pk')
+        context['project_id'] = project_id
+        items = Item.objects.filter(release=release_id)
+        context['items'] = items
+        return context
+
+
+class ReleaseCreate(CreateView):
+
+    model = Release
+    # template_name = 'edit.html'
+    form_class = forms.ReleaseForm
+    success_url = '/releases/'
+
+    def get_context_data(self, **kwargs):
+        context = super(ReleaseCreate, self).get_context_data(**kwargs)
+        project_id = self.kwargs.get('project_id')
+        context['project_id'] = project_id
+        self.success_url = '/projects/{{project_id}}'.replace('{{project_id}}', project_id)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        project_id = self.kwargs.get('project_id')
+        self.success_url = '/projects/{{project_id}}'.replace('{{project_id}}', project_id)
+        return super(ReleaseCreate, self).post(self, request, *args, **kwargs)
+
+
+class ReleaseUpdate(UpdateView):
+
+    model = Release
+    # template_name = 'edit.html'
+    form_class = forms.ReleaseForm
+    success_url = '/releases/'
+
+
+def release_delete(request, pk):
+    Release.objects.filter(id=pk).delete()
+    return http.HttpResponseRedirect('/projects/')
+
+
+#
+#   Items
+#
+
+
+class ItemIndex(ListView):
+    model = Item
+    template_name = 'item_index.html'
+
+
+class ItemDetail(DetailView):
+
+    model = Item
+    template_name = 'item_view.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ItemDetail, self).get_context_data(**kwargs)
+        project_id = self.kwargs.get('project_id')
+        release_id = self.kwargs.get('release_id')
+        context['project_id'] = project_id
+        context['release_id'] = release_id
+        return context
+
+
+class ItemCreate(CreateView):
+
+    model = Item
+    template_name = 'item_edit.html'
+    form_class = forms.ItemForm
+    success_url = '/items/'
+
+    def get_context_data(self, **kwargs):
+        context = super(ItemCreate, self).get_context_data(**kwargs)
+        project_id = self.kwargs.get('project_id')
+        release_id = self.kwargs.get('release_id')
+        context['project_id'] = project_id
+        context['release_id'] = release_id
+        return context
+
+    def get_success_url(self):
+        project_id = self.kwargs.get('project_id')
+        release_id = self.kwargs.get('release_id')
+
+        if 'submit_and_add' in self.get_form_kwargs().get('data'):
+            self.success_url = '/projects/project_id/releases/release_id/items/create/'.replace('project_id', project_id).replace('release_id', release_id)
+            return self.success_url
+        else:
+            self.success_url = '/projects/project_id/releases/release_id'.replace('project_id', project_id).replace('release_id', release_id)
+            return self.success_url
+
+
+class ItemUpdate(UpdateView):
+
+    model = Item
+    template_name = 'item_edit.html'
+    form_class = forms.ItemForm
+    success_url = '/items/'
+
+    def get_success_url(self):
+        if 'submit_and_add' in self.get_form_kwargs().get('data'):
+            return '/items/create/'
+        else:
+            return self.success_url
+
+
+def item_delete(request, pk):
+    Item.objects.filter(id=pk).delete()
+    return http.HttpResponseRedirect('/projects/')
+
+
+#
+#   other stuff
+#
 
 
 from django import template

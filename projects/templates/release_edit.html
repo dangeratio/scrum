@@ -12,7 +12,7 @@
 
 {% block left %}
 <div class="btn-group-vertical fill-h padding-bottom-20" role="group">
-    <a class="btn btn-lg btn-warning" href="/releases/"><i class="fa fa-times"></i> Cancel</a>
+    <a class="btn btn-lg btn-warning" href="/projects/{{ project_id }}"><i class="fa fa-times"></i> Cancel</a>
     {% if release.id %}<a class="btn btn-lg btn-danger" href="/releases/delete/{{ release.id }}"><i class="fa fa-trash-o"></i> Delete</a>{% endif %}
 </div>
 {% endblock %}
@@ -20,12 +20,12 @@
 
 {% block content %}
 
-    <form action="{% if release.id %}/releases/edit/{{ release.id }}{% else %}/releases/create/{% endif %}" method="POST">
+    <form action="{% if release.id %}/projects/{{ project_id }}/releases/edit/{{ release.id }}{% else %}/projects/{{ project_id }}/releases/create/{% endif %}" method="POST">
     {% csrf_token %}
 
 
     <div class="panel panel-primary">
-        <div class="panel-heading">edit release</div>
+        <div class="panel-heading">{% if release.id %}edit release{% else %}create release{% endif %}</div>
         {% for field in form %}
         <div class="list-group-item">
             {% bootstrap_field field %}

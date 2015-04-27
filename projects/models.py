@@ -1,36 +1,52 @@
 from django.db import models
-from django.contrib.auth.models import User
 
 
 class Project(models.Model):
 
-    class Meta:
-        db_table = 'projects'
-
-    # user_list = User.objects.filter(active=1)
-
     title = models.CharField(max_length=200)
-    detail = models.TextField()
-    key_title = models.CharField(max_length=5)
-    owner = models.ForeignKey(User, db_column='username',
-                              db_constraint=False,
-                              blank=True,
-                              null=True,
-                              )
-    total_releases = models.IntegerField(default=0)
-    total_items = models.IntegerField(default=0)
+    detail = models.CharField(max_length=2000)
+
+    def __str__(self):
+        return self.title
 
     def __unicode__(self):
         return self.title
 
 
+class Release(models.Model):
+
+    project_id = models.ForeignKey(Project, name='project', db_column='project_id_id')
+    title = models.CharField(max_length=200)
+    detail = models.CharField(max_length=2000)
+
+    def __str__(self):
+        return self.title
+
+    def __unicode__(self):
+        return self.title
 
 
+class Item(models.Model):
+
+    release_id = models.ForeignKey(Release, name='release', db_column='release_id_id')
+    title = models.CharField(max_length=200)
+    detail = models.CharField(max_length=2000)
+
+    def __str__(self):
+        return self.title
+
+    def __unicode__(self):
+        return self.title
 
 
+class Task(models.Model):
 
+    item_id = models.ForeignKey(Item, name='item', db_column='item_id_id')
+    title = models.CharField(max_length=200)
+    detail = models.CharField(max_length=2000)
 
+    def __str__(self):
+        return self.title
 
-
-
-
+    def __unicode__(self):
+        return self.title

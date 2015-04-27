@@ -9,9 +9,9 @@
 <div class="list-group">
 
     {% for project in object_list %}
-        <a class="list-group-item" href="/projects/view/{{ project.id }}">
+        <a class="list-group-item font-size-18" href="/projects/{{ project.id }}">
             {{ project.title }}
-        <span class="badge">123</span>
+        <span class="badge">{{ project.total_items }}</span>
         </a>
     {% endfor %}
 </ul>

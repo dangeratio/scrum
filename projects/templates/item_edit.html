@@ -12,15 +12,15 @@
 
 {% block left %}
 <div class="btn-group-vertical fill-h padding-bottom-20" role="group">
-    <a class="btn btn-lg btn-warning" href="/items/"><i class="fa fa-times"></i> Cancel</a>
-    {% if item.id %}<a class="btn btn-lg btn-danger" href="/items/delete/{{ item.id }}"><i class="fa fa-trash-o"></i> Delete</a>{% endif %}
+    <a class="btn btn-lg btn-warning" href="/projects/{{project_id}}/releases/{{release_id}}"><i class="fa fa-times"></i> Cancel</a>
+    {% if item.id %}<a class="btn btn-lg btn-danger" href="/projects/{{project_id}}/releases/{{release_id}}/items/delete/{{ item.id }}"><i class="fa fa-trash-o"></i> Delete</a>{% endif %}
 </div>
 {% endblock %}
 
 
 {% block content %}
 
-    <form action="{% if item.id %}/items/edit/{{ item.id }}{% else %}/items/create/{% endif %}" method="POST">
+    <form action="{% if item.id %}/projects/{{project_id}}/releases/{{release_id}}/items/edit/{{ item.id }}{% else %}/projects/{{project_id}}/releases/{{release_id}}/items/create/{% endif %}" method="POST">
     {% csrf_token %}
 
     <div class="panel panel-primary">

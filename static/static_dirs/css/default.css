@@ -105,3 +105,12 @@ fieldset {
 .p-no-margin p {
     margin: 0px;
 }
+
+.parent-hover-style {
+    /* background: #a7cadb; */
+    border-color: black;
+}
+
+.font-size-18 {
+    font-size: 18px;
+}

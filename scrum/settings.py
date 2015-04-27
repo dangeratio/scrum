@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
+from projects import *
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
@@ -20,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '31mieu#p#8^&%a28o+_p6vx8x9n50z7+czur#u=99kjlyg)7y4'
+SECRET_KEY = '$7f(#9+_77u7cwkg=2j20od+62-nob24-few03a5@m(b55p9iu'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,20 +33,18 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-    # standard
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # addon apps
+
+    # external apps
     'bootstrap3',
-    'debug_toolbar',
-    # project models
+
+    # internal apps
     'projects',
-    'releases',
-    'items',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -63,12 +63,10 @@ ROOT_URLCONF = 'scrum.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': (
-            os.path.join(BASE_DIR, 'scrum/templates/'),
-            os.path.join(BASE_DIR, 'projects/templates/'),
-            os.path.join(BASE_DIR, 'releases/templates/'),
-            os.path.join(BASE_DIR, 'views/templates/'),
-        ),
+        'DIRS': [
+            os.path.join(BASE_DIR, 'projects/templates'),
+            os.path.join(BASE_DIR, 'scrum/templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -90,7 +88,7 @@ WSGI_APPLICATION = 'scrum.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'storage.db'),
+        'NAME': os.path.join(BASE_DIR, 'source.db'),
     }
 }
 
@@ -107,6 +105,7 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
 
 # Static files settings
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
