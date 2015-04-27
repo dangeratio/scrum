@@ -5,15 +5,27 @@
 
 {% block content %}
 
-<h1>Projects</h1>
-<div class="list-group">
-
+<div class="list-group panel-primary">
+    <div class="panel-heading font-size-18">Projects</div>
     {% for project in object_list %}
         <a class="list-group-item font-size-18" href="/projects/{{ project.id }}">
             {{ project.title }}
-        <span class="badge">{{ project.total_items }}</span>
+        <span class="badge badge-primary">{{ project.total_releases }}</span>
+        <span class="badge badge-primary">{{ project.total_items }}</span>
+
         </a>
     {% endfor %}
-</ul>
+</div>
+
+{% endblock %}
+
+{% block right %}
+
+<div class="panel panel-info fill-h">
+    <div class="panel-heading font-size-18">Statistics</div>
+    <div class="list-group-item">Total Projects <span class="badge badge-info">{{ total_projects }}</span></div>
+    <div class="list-group-item">Total Releases <span class="badge badge-info">{{ total_releases }}</span></div>
+    <div class="list-group-item">Total Items <span class="badge badge-info">{{ total_items }}</span></div>
+</div>
 
 {% endblock %}

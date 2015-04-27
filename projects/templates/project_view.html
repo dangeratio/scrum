@@ -4,7 +4,6 @@
 {% block title %}project view{% endblock %}
 
 {% block left %}
-Project Actions
 <div class="btn-group-vertical fill-h padding-bottom-20" role="group">
     <a class="btn btn-lg btn-warning" href="/projects/">Back</a>
     <a class="btn btn-lg btn-default" href="/projects/{{ project.id }}/releases/create">New Release</a>
@@ -16,7 +15,6 @@ Project Actions
 {% block content %}
 
 <div class="panel panel-primary">
-
 <!--<div class="list-group">-->
     <div class="panel-heading font-size-18">{{ project.title }} [{{ project.key }}]</div>
     <div class="panel-body p-no-margin">{{ project.detail|safe|linebreaks }}</div>

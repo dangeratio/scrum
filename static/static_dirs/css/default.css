@@ -114,3 +114,22 @@ fieldset {
 .font-size-18 {
     font-size: 18px;
 }
+
+.badge-info {
+    background-color: #D9EDF7;
+    color: #31708F;
+}
+
+.badge-primary {
+    background-color: #337AB7;
+    color: white;
+}
+
+.textarea-full-width {
+    width: 100%;
+}
+
+.subtitle {
+    color: #c0c0c0;
+    font-size: smaller;
+}

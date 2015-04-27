@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block pagetitle %}scrum - item delete confirm{% endblock %}
+{% block title %}item delete confirm{% endblock %}
+
+{% block content %}
+
+    <form action="{% if item_id %}/projects/{{project_id}}/releases/{{release_id}}/items/delete/{{item_id}}{% endif %}" method="POST">
+    {% csrf_token %}
+
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">{% if item_id %}Delete Item{% endif %}</div>
+        <div class="list-group-item">
+            Are you sure you want to delete this item?
+        </div>
+        <div class="list-group-item">
+            <button type="submit" class="btn btn-lg btn-danger list-group-item">Yes, Delete Item <i class="fa fa-trash-o"></i></button>
+        </div>
+    </div>
+
+    </form>
+
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, UpdateView, ModelFormMixin, DeleteView
 from django import http
 from django.utils import timezone
 from django.http import HttpResponseRedirect
@@ -31,6 +31,16 @@ class ProjectIndex(ListView):
     model = Project
     template_name = 'project_index.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(ProjectIndex, self).get_context_data(**kwargs)
+        total_projects = Project.objects.all().count()
+        total_releases = Release.objects.all().count()
+        total_items = Item.objects.all().count()
+        context['total_projects'] = total_projects
+        context['total_releases'] = total_releases
+        context['total_items'] = total_items
+        return context
+
 
 class ProjectDetail(DetailView):
     model = Project
@@ -51,17 +61,63 @@ class ProjectCreate(CreateView):
     form_class = forms.ProjectForm
     success_url = '/projects/'
 
-    def post(self, request, *args, **kwargs):
-        # create the project object and save it
+    def form_valid(self, form):
 
+        # create the project object and save it
+        self.object = form.save()
+        created_project_id = self.object.id
 
         # create a "backlog" release to start out with
+        backlog = Release.objects.create(
+            project_id=created_project_id,
+            title='Backlog',
+            detail='The default backlog group',
+        )
+        backlog.save()
 
+        return super(ModelFormMixin, self).form_valid(form)
 
-        # get project id for success url to redirect to the view of the project you just created
+    def post(self, request, *args, **kwargs):
         project_id = ''
         self.success_url = '/projects/project_id'.replace("project_id", project_id)
         return super(ProjectCreate, self).post(request, *args, **kwargs)
+
+
+class ProjectCreateQuick(ProjectCreate):
+
+    template_name = 'project_quick.html'
+
+    def form_valid(self, form):
+
+        # create the project object and save it
+        self.object = form.save()
+        created_project_id = self.object.id
+
+        # create a "backlog" release to start out with
+        backlog = Release.objects.create(
+            project_id=created_project_id,
+            title='Backlog',
+            detail='The default backlog group',
+        )
+        backlog.save()
+        backlog_object_id = backlog.pk
+
+        # backlog_object_id = backlog_object.id
+
+        # create sub items under the backlog
+        quick_items = self.request.POST['quick_items']
+        for lines in iter(quick_items.splitlines()):
+            values = lines.split(',')
+            new_item = Item.objects.create(
+                release_id=backlog_object_id,
+                title=values[0],
+                detail=values[1],
+            )
+            new_item.save()
+
+        return super(ModelFormMixin, self).form_valid(form)
+
+
 
 
 class ProjectUpdate(UpdateView):
@@ -72,10 +128,21 @@ class ProjectUpdate(UpdateView):
     slug_field = 'project_id'
 
 
+'''
 def project_delete(request, pk):
     Project.objects.filter(pk=pk).delete()
     slug_field = 'project_id'
     return http.HttpResponseRedirect('/projects/')
+'''
+
+
+class ProjectDelete(DeleteView):
+
+    model = Project
+    template_name = 'project_delete.html'
+    form_class = forms.ProjectForm
+    success_url = '/projects/'
+
 
 
 #
@@ -95,6 +162,7 @@ class ReleaseIndex(ListView):
 class ReleaseDetail(DetailView):
 
     model = Release
+    template_name='release_view.html'
 
     def get_context_data(self, **kwargs):
         context = super(ReleaseDetail, self).get_context_data(**kwargs)
@@ -112,6 +180,7 @@ class ReleaseCreate(CreateView):
     # template_name = 'edit.html'
     form_class = forms.ReleaseForm
     success_url = '/releases/'
+    template_name='release_edit.html'
 
     def get_context_data(self, **kwargs):
         context = super(ReleaseCreate, self).get_context_data(**kwargs)
@@ -132,11 +201,25 @@ class ReleaseUpdate(UpdateView):
     # template_name = 'edit.html'
     form_class = forms.ReleaseForm
     success_url = '/releases/'
+    template_name='release_edit.html'
 
 
-def release_delete(request, pk):
-    Release.objects.filter(id=pk).delete()
-    return http.HttpResponseRedirect('/projects/')
+class ReleaseDelete(DeleteView):
+
+    model = Release
+    form_class = forms.ReleaseForm
+    template_name='release_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ReleaseDelete, self).get_context_data(**kwargs)
+        project_id = self.kwargs.get('project_id')
+        context['project_id'] = project_id
+        return context
+
+    def get_success_url(self):
+        project_id = self.kwargs.get('project_id')
+        success_url = '/projects/{{project_id}}'.replace('{{project_id}}', project_id)
+        return success_url
 
 
 #
@@ -204,9 +287,34 @@ class ItemUpdate(UpdateView):
             return self.success_url
 
 
+'''
 def item_delete(request, pk):
     Item.objects.filter(id=pk).delete()
     return http.HttpResponseRedirect('/projects/')
+'''
+
+
+class ItemDelete(DeleteView):
+
+    model = Item
+    form_class = forms.ItemForm
+    template_name = 'item_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ItemDelete, self).get_context_data(**kwargs)
+        project_id = self.kwargs.get('project_id')
+        release_id = self.kwargs.get('release_id')
+        item_id = self.kwargs.get('pk')
+        context['project_id'] = project_id
+        context['release_id'] = release_id
+        context['item_id'] = item_id
+        return context
+
+    def get_success_url(self):
+        project_id = self.kwargs.get('project_id')
+        release_id = self.kwargs.get('release_id')
+        success_url = '/projects/project_id/releases/release_id'.replace('project_id', project_id).replace('release_id', release_id)
+        return success_url
 
 
 #

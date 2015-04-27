@@ -3,17 +3,12 @@
 {% load bootstrap3 %}
 
 {% block title %}
-{% if project.id %}
-    scrum - edit project
-{% else %}
-    scrum - create project
-{% endif %}
+    scrum - quick create project
 {% endblock %}
 
 {% block left %}
 <div class="btn-group-vertical fill-h padding-bottom-20" role="group">
     <a class="btn btn-lg btn-warning" href="/projects/"><i class="fa fa-times"></i> Cancel</a>
-    {% if project.id %}<a class="btn btn-lg btn-danger" href="/projects/delete/{{ project.id }}"><i class="fa fa-trash-o"></i> Delete</a>{% endif %}
 </div>
 {% endblock %}
 
@@ -24,7 +19,7 @@
         {% bootstrap_messages show_message %}
     {% endif %}
 
-    <form action="{% if project.id %}/projects/edit/{{ project.id }}/{% else %}/projects/create/{% endif %}" method="POST">
+    <form action="/projects/quick/" method="POST">
     {% csrf_token %}
 
     <div class="panel panel-primary">
@@ -37,6 +32,10 @@
             {% bootstrap_field field %}
         </div>
         {% endfor %}
+        <div class="list-group-item">
+            <label class="control-label" for="quick_items">Items <span class="subtitle">(Usage: Item Title, Item Description for each line)</span></label>
+            <textarea name="quick_items" id="quick_items" class="textarea-full-width" rows="6"></textarea>
+        </div>
         <div class="list-group-item">
             <button type="submit" class="btn btn-lg btn-success list-group-item"><i class="fa fa-check"></i> Submit</button>
         </div>
