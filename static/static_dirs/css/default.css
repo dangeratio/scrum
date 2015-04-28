@@ -133,3 +133,7 @@ fieldset {
     color: #c0c0c0;
     font-size: smaller;
 }
+
+.hidden-radio {
+    display: none;
+}

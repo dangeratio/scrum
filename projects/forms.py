@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import widgets
 from projects.models import Project, Release, Item
 
 # for custom select widget
@@ -38,6 +39,10 @@ class ItemForm(forms.ModelForm):
         exclude = (
             'key',
         )
+
+        widgets = {
+            'priority': forms.widgets.RadioChoiceInput(),
+        }
 
 
 
