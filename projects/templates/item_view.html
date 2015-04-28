@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load tags %}
+
 {% block pagetitle %}scrum - item view{% endblock %}
 {% block title %}item view{% endblock %}
 
@@ -28,7 +30,7 @@
     <div class="panel-heading font-size-18">{{ item.title }}</div>
     <div class="list-group-item"><div class="p-no-margin"><u>Detail</u><br>{{ item.detail|linebreaks }}</div></div>
     <div class="list-group-item"><u>Type</u><br> {{ item.type }}</div>
-    <div class="list-group-item"><u>Priority</u><br> {{ item.type }}</div>
+    <div class="list-group-item"><u>Priority</u><br> {{ item.priority|show_priority }}</div>
     <div class="list-group-item"><u>Effort</u><br> {{ item.effort }}</div>
     <div class="list-group-item"><u>Release</u><br> {{ item.release }}</div>
     <div class="list-group-item"><u>Status</u><br> {{ item.status }}</div>

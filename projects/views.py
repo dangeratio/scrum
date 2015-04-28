@@ -10,6 +10,7 @@ from django.template import context
 
 from projects.models import Project, Release, Item
 from projects import forms
+from projects import templatetags
 
 
 # usage: raise DebugMessage('asdf')
@@ -66,11 +67,13 @@ class ProjectCreate(CreateView):
         # create the project object and save it
         self.object = form.save()
         created_project_id = self.object.id
+        created_project_title = self.object.title
+        backlog_title = created_project_title + ' Backlog'
 
         # create a "backlog" release to start out with
         backlog = Release.objects.create(
             project_id=created_project_id,
-            title='Backlog',
+            title=backlog_title,
             detail='The default backlog group',
         )
         backlog.save()
@@ -92,11 +95,13 @@ class ProjectCreateQuick(ProjectCreate):
         # create the project object and save it
         self.object = form.save()
         created_project_id = self.object.id
+        created_project_title = self.object.title
+        backlog_title = created_project_title + ' Backlog'
 
         # create a "backlog" release to start out with
         backlog = Release.objects.create(
             project_id=created_project_id,
-            title='Backlog',
+            title=backlog_title,
             detail='The default backlog group',
         )
         backlog.save()
@@ -162,14 +167,14 @@ class ReleaseIndex(ListView):
 class ReleaseDetail(DetailView):
 
     model = Release
-    template_name='release_view.html'
+    template_name = 'release_view.html'
 
     def get_context_data(self, **kwargs):
         context = super(ReleaseDetail, self).get_context_data(**kwargs)
         project_id = self.kwargs.get('project_id')
         release_id = self.kwargs.get('pk')
         context['project_id'] = project_id
-        items = Item.objects.filter(release=release_id)
+        items = Item.objects.filter(release=release_id).order_by('-priority')
         context['items'] = items
         return context
 
@@ -201,7 +206,19 @@ class ReleaseUpdate(UpdateView):
     # template_name = 'edit.html'
     form_class = forms.ReleaseForm
     success_url = '/releases/'
-    template_name='release_edit.html'
+    template_name = 'release_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ReleaseUpdate, self).get_context_data(**kwargs)
+        project_id = self.kwargs.get('project_id')
+        context['project_id'] = project_id
+        return context
+
+    def post(self, request, *args, **kwargs):
+        project_id = self.kwargs.get('project_id')
+        release_id = self.kwargs.get('pk')
+        self.success_url = '/projects/project_id/releases/release_id'.replace('project_id', project_id).replace('release_id', release_id)
+        return super(ReleaseUpdate, self).post(self, request, *args, **kwargs)
 
 
 class ReleaseDelete(DeleteView):
@@ -281,10 +298,24 @@ class ItemUpdate(UpdateView):
     success_url = '/items/'
 
     def get_success_url(self):
+        project_id = self.kwargs.get('project_id')
+        release_id = self.kwargs.get('release_id')
+
         if 'submit_and_add' in self.get_form_kwargs().get('data'):
-            return '/items/create/'
-        else:
+            self.success_url = '/projects/project_id/releases/release_id/items/create/'.replace('project_id', project_id).replace('release_id', release_id)
             return self.success_url
+        else:
+            self.success_url = '/projects/project_id/releases/release_id'.replace('project_id', project_id).replace('release_id', release_id)
+            return self.success_url
+
+    def get_context_data(self, **kwargs):
+        context = super(ItemUpdate, self).get_context_data(**kwargs)
+        project_id = self.kwargs.get('project_id')
+        release_id = self.kwargs.get('release_id')
+        context['project_id'] = project_id
+        context['release_id'] = release_id
+        return context
+
 
 
 '''
@@ -315,22 +346,4 @@ class ItemDelete(DeleteView):
         release_id = self.kwargs.get('release_id')
         success_url = '/projects/project_id/releases/release_id'.replace('project_id', project_id).replace('release_id', release_id)
         return success_url
-
-
-#
-#   other stuff
-#
-
-
-from django import template
-register = template.Library()
-
-@register.filter('field_class')
-def field_class(ob):
-    return ob.__class__.__name__
-
-
-
-
-
 

@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load tags %}
+
 {% block pagetitle %}scrum - release view{% endblock %}
 {% block title %}release view{% endblock %}
 
@@ -36,7 +38,7 @@
 </div>
 
 {% for item in items %}
-<div class="panel panel-info">
+<div class="panel panel-{{ item.priority|priority_css }}">
     <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project_id }}/releases/{{ release.id }}/items/{{ item.id }}">{{ item.title }}</a>
     <div class="panel-body p-no-margin"><u>Detail</u>{{ item.detail|safe|linebreaks }}</div>
 </div>
