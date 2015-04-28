@@ -18,7 +18,6 @@
 <!--<div class="list-group">-->
     <div class="panel-heading font-size-18">{{ project.title }} [{{ project.key }}]</div>
     <div class="panel-body p-no-margin"><u>Detail</u>{{ project.detail|safe|linebreaks }}</div>
-    <div class="panel-body"><u>Owner</u> {{ project.owner }}</div>
 </div>
 
 {% for release in releases %}

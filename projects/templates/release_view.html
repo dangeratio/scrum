@@ -32,9 +32,9 @@
 
 <div class="panel panel-primary">
     <div class="panel-heading font-size-18">{{ release.title }}</div>
-    <div class="panel-body"><u>Number</u>{{ release.number }}</div>
-    <div class="panel-body"><u>Status</u>{{ release.status }}</div>
-    <div class="panel-body p-no-margin"><u>Detail</u>{{ release.detail|safe|linebreaks }}</div>
+    <div class="panel-body"><u>Number</u><br>{{ release.number }}</div>
+    <div class="panel-body"><u>Status</u><br>{{ release.status }}</div>
+    <div class="panel-body p-no-margin"><u>Detail</u><br>{{ release.detail|safe|linebreaks }}</div>
 </div>
 
 {% for item in items %}

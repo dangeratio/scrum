@@ -15,4 +15,37 @@ $(document).ready(function() {
         }
     );
 
+    // version control for releases
+
+    $('input#id_number').after(" \
+        Minor <input type='button' onclick='javascript:id_number_decrease_sm()' value='-' /> \
+        <input type='button' onclick='javascript:id_number_increase_sm()' value='+' />&nbsp;&nbsp;&nbsp; \
+        Major <input type='button' onclick='javascript:id_number_decrease()' value='-' /> \
+        <input type='button' onclick='javascript:id_number_increase()' value='+' /> \
+        ");
+
+
 });
+
+
+// version control for releases
+
+function id_number_decrease() {
+    id_number = document.getElementById('id_number');
+    id_number.value = parseFloat(id_number.value) - 1;
+}
+
+function id_number_increase() {
+    id_number = document.getElementById('id_number');
+    id_number.value = parseFloat(id_number.value) + 1;
+}
+
+function id_number_decrease_sm() {
+    id_number = document.getElementById('id_number');
+    id_number.value = parseFloat(id_number.value) - 0.1;
+}
+
+function id_number_increase_sm() {
+    id_number = document.getElementById('id_number');
+    id_number.value = parseFloat(id_number.value) + 0.1;
+}
