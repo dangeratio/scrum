@@ -40,10 +40,11 @@ class ItemForm(forms.ModelForm):
             'key',
         )
 
+        '''
         widgets = {
             'priority': forms.widgets.RadioChoiceInput(),
         }
-
+        '''
 
 
 

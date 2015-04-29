@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load tags %}
+
 {% block pagetitle %}scrum - project index{% endblock %}
 {% block title %}project index{% endblock %}
 
@@ -10,9 +12,8 @@
     {% for project in object_list %}
         <a class="list-group-item font-size-18" href="/projects/{{ project.id }}">
             {{ project.title }}
-        <span class="badge badge-primary">{{ project.total_releases }}</span>
-        <span class="badge badge-primary">{{ project.total_items }}</span>
-
+        <span class="badge badge-primary">Releases: {{ release_totals|return_value:project.id }}</span>
+        <span class="badge badge-primary">Items: {{ item_totals|return_value:project.id }}</span>
         </a>
     {% endfor %}
 </div>

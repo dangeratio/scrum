@@ -22,7 +22,10 @@
 
 {% for release in releases %}
 <div class="panel panel-info">
-    <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project.id }}/releases/{{ release.id }}">{{ release.title }}</a>
+    <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project.id }}/releases/{{ release.id }}">
+        {{ release.title }}
+        <span class="badge">{{ release.num_items }}</span>
+    </a>
     <div class="list-group-item p-no-margin">{{ release.detail|safe|linebreaks }}</div>
     <!--
     <div class="list-group-item p-no-margin">project_id: {{ release.project_id }}</div>

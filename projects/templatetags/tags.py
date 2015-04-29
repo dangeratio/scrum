@@ -54,6 +54,8 @@ def priority_css(ob):
 
     return css
 
-
-
+@register.filter('return_value')
+def return_value(obj, arg):
+    # raise DebugMessage(ob)
+    return obj[arg]
 

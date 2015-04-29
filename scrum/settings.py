@@ -43,6 +43,9 @@ INSTALLED_APPS = (
     # external apps
     'bootstrap3',
 
+    # only needed during development, can be removed
+    'debug_toolbar',
+
     # internal apps
     'projects',
 )

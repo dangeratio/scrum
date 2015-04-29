@@ -11,7 +11,7 @@ urlpatterns = [
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^projects/', include(projects.urls)),
-    url(r'^/$', RedirectView.as_view(url='/projects/')),
-    url(r'^$', RedirectView.as_view(url='/projects/')),
+    url(r'^/$', RedirectView.as_view(url='/projects/', permanent=True)),
+    url(r'^$', RedirectView.as_view(url='/projects/', permanent=True)),
 
 ]

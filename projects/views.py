@@ -1,6 +1,9 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, ModelFormMixin, DeleteView
+
+from django.db.models import Count
+
 from django import http
 from django.utils import timezone
 from django.http import HttpResponseRedirect
@@ -34,12 +37,29 @@ class ProjectIndex(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ProjectIndex, self).get_context_data(**kwargs)
-        total_projects = Project.objects.all().count()
+        total_projects = Project.objects.count()
         total_releases = Release.objects.all().count()
         total_items = Item.objects.all().count()
         context['total_projects'] = total_projects
         context['total_releases'] = total_releases
         context['total_items'] = total_items
+
+        # get release totals for project view
+        release_query = 'select projects_project.id as id, count(projects_release.id) as release_total from projects_project left join projects_release on projects_release.project_id_id = projects_project.id group by projects_project.id'
+        release_rows = Project.objects.raw(release_query)
+        release_totals = {}
+        for row in release_rows:
+            release_totals[row.id] = row.release_total
+        context['release_totals'] = release_totals
+
+        # get item totals for project view
+        item_query = 'select projects_project.id as id, count(projects_item.id) as item_total from projects_project left join projects_release on projects_release.project_id_id = projects_project.id left join projects_item on projects_item.release_id_id = projects_release.id group by projects_project.id'
+        item_rows = Project.objects.raw(item_query)
+        item_totals = {}
+        for row in item_rows:
+            item_totals[row.id] = row.item_total
+        context['item_totals'] = item_totals
+
         return context
 
 
@@ -51,8 +71,9 @@ class ProjectDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ProjectDetail, self).get_context_data(**kwargs)
         project_id = self.kwargs['pk']
-        releases = Release.objects.filter(project=project_id)
+        releases = Release.objects.filter(project=project_id).annotate(num_items=Count('item'))
         context['releases'] = releases
+
         return context
 
 
@@ -123,8 +144,6 @@ class ProjectCreateQuick(ProjectCreate):
         return super(ModelFormMixin, self).form_valid(form)
 
 
-
-
 class ProjectUpdate(UpdateView):
     model = Project
     template_name = 'project_edit.html'
@@ -147,7 +166,6 @@ class ProjectDelete(DeleteView):
     template_name = 'project_delete.html'
     form_class = forms.ProjectForm
     success_url = '/projects/'
-
 
 
 #
@@ -176,6 +194,41 @@ class ReleaseDetail(DetailView):
         context['project_id'] = project_id
         items = Item.objects.filter(release=release_id).order_by('-priority')
         context['items'] = items
+
+        # set backlog_flag true if backlog is in the title of the release
+        title = context['release'].title
+        title = title.lower()
+        if title.find('backlog') == -1:
+            backlog_flag = False
+        else:
+            backlog_flag = True
+        context['backlog_flag'] = backlog_flag
+
+        return context
+
+
+class ReleaseQuickAdd(DetailView):
+
+    model = Release
+    template_name = 'release_view.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ReleaseDetail, self).get_context_data(**kwargs)
+        project_id = self.kwargs.get('project_id')
+        release_id = self.kwargs.get('pk')
+        context['project_id'] = project_id
+        items = Item.objects.filter(release=release_id).order_by('-priority')
+        context['items'] = items
+
+        # set backlog_flag true if backlog is in the title of the release
+        title = context['release'].title
+        title = title.lower()
+        if title.find('backlog') == -1:
+            backlog_flag = False
+        else:
+            backlog_flag = True
+        context['backlog_flag'] = backlog_flag
+
         return context
 
 
