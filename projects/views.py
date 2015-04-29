@@ -210,10 +210,10 @@ class ReleaseDetail(DetailView):
 class ReleaseQuickAdd(DetailView):
 
     model = Release
-    template_name = 'release_view.html'
+    template_name = 'release_quick.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ReleaseDetail, self).get_context_data(**kwargs)
+        context = super(ReleaseQuickAdd, self).get_context_data(**kwargs)
         project_id = self.kwargs.get('project_id')
         release_id = self.kwargs.get('pk')
         context['project_id'] = project_id

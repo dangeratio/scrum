@@ -1,3 +1,11 @@
+/*
+ *  default.css
+ *  main styling for scrum project
+ */
+
+
+/* font, got to love that ubuntu font */
+
 @font-face {
   font-family: "Ubuntu";
   font-style: normal;
@@ -12,6 +20,9 @@
   src: local("Ubuntu"), url("http://fonts.gstatic.com/s/ubuntu/v7/zvCUQcxqeoKhyOlbifSAaevvDin1pK8aKteLpeZ5c0A.woff2") format("woff2"), url("http://fonts.gstatic.com/s/ubuntu/v7/vRvZYZlUaogOuHbBTT1SNevvDin1pK8aKteLpeZ5c0A.woff") format("woff");
 }
 
+
+
+/* page layout */
 
 #page {
     width: 1040px;
@@ -40,16 +51,18 @@
     vertical-align: middle;
 }
 
-.fill-h {
-    width:100%;
-}
-
 #right {
     float: right;
     margin-right: 10px;
     margin-left: 10px;
     width: 200px;
     text-align: left;
+}
+
+/* misc tweaks */
+
+.fill-h {
+    width:100%;
 }
 
 .pad10 {
@@ -102,18 +115,26 @@ fieldset {
     width:100%;
 }
 
+/* margin fix for detail fields */
+
 .p-no-margin p {
     margin: 0px;
 }
+
+/* sub-item (release for projects, item for releases) highlight for hover */
 
 .parent-hover-style {
     /* background: #a7cadb; */
     border-color: black;
 }
 
+/* used for most headers */
+
 .font-size-18 {
     font-size: 18px;
 }
+
+/* badge colors for /projects/ */
 
 .badge-info {
     background-color: #D9EDF7;
@@ -125,15 +146,36 @@ fieldset {
     color: white;
 }
 
+/* ? */
+
 .textarea-full-width {
     width: 100%;
 }
+
+/* project quick add subtitle */
 
 .subtitle {
     color: #c0c0c0;
     font-size: smaller;
 }
 
+/* test for new drop down type or button select type */
+
 .hidden-radio {
     display: none;
+}
+
+/* release items styles */
+
+table.release_items {
+    width: 100%;
+}
+
+td.left, td.right {
+    width: 49%;
+    vertical-align: top;
+}
+
+td.spacer {
+    width: 10px;
 }
