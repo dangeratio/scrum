@@ -5,6 +5,10 @@
 {% block pagetitle %}scrum - release view{% endblock %}
 {% block title %}release view{% endblock %}
 
+{% block head %}
+<!-- <script type="text/javascript" src="/static/js/jquery.ajax.min.js"></script> -->
+{% endblock %}
+
 {% block left %}
 
 <div class="btn-group-vertical fill-h padding-bottom-20" role="group">
@@ -34,11 +38,33 @@
     <div class="panel-body p-no-margin"><u>Detail</u><br>{{ release.detail|safe|linebreaks }}</div>
 </div>
 
-{% for item in items %}
-<div class="panel panel-{{ item.priority|priority_css }}">
-    <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project_id }}/releases/{{ release.id }}/items/{{ item.id }}">{{ item.title }}</a>
-    <div class="panel-body p-no-margin"><u>Detail</u>{{ item.detail|safe|linebreaks }}</div>
-</div>
-{% endfor %}
+<table class="full drag-container">
+    <tr><td class="title">Backlog Items</td><td class="spacer"></td><td class="title">Release Items</td></tr>
+    <tr><td class="left">
+    <div id="release{{backlog_id}}" class="container panel-default backlog_items">
+        {% for left_item in left %}
+        <div id="item{{left_item.id}}" class="panel-heading">{{ left_item.title }}</div>
+        {% endfor %}
+    </div>
+</td><td class="spacer"></td><td class="right">
+    <div id="release{{release.id}}" class="container panel-default release_items">
+        {% for right_item in right %}
+        <div id="item{{right_item.id}}" class="panel-heading">{{ right_item.title }}</div>
+        {% endfor %}
+    </div>
+</td></tr></table>
+
+<div id='status_field' class="status">no status</div>
+
+<script type="text/javascript" src="/static/js/dragula.min.js"></script>
+
+<script type="text/javascript">
+var csrf_token = "{{ csrf_token }}";
+var release_items = document.getElementById("release{{release.id}}")
+var backlog_items = document.getElementById("release{{backlog_id}}")
+</script>
+
+<script type="text/javascript" src="/static/js/release_quick.js"></script>
+
 
 {% endblock %}

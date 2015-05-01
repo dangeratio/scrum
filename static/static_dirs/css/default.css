@@ -167,7 +167,7 @@ fieldset {
 
 /* release items styles */
 
-table.release_items {
+table.release_items, table.container {
     width: 100%;
 }
 
@@ -176,6 +176,104 @@ td.left, td.right {
     vertical-align: top;
 }
 
+/* release quick add styles */
+
+div.backlog_items, div.release_items {
+    background-color: #fff;
+    border: 1px dotted #c0c0c0;
+    padding: 15px;
+    width: 100%;
+    height: 100%;
+}
+
+div.backlog_items div, div.release_items div, td.title, div.status {
+    padding: 10px;
+    margin: 5px;
+}
+
 td.spacer {
     width: 10px;
+}
+
+table.full {
+    width: 100%;
+}
+
+table.drag-container {
+
+}
+
+/* dragula css */
+
+.gu-mirror {
+  position: fixed !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+}
+
+.gu-hide {
+  display: none !important;
+}
+
+.gu-unselectable {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+.gu-transit {
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+}
+
+.gu-mirror {
+  opacity: 0.8;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: alpha(opacity=80);
+}
+
+/* dragula-specific example page styles */
+
+.wrapper {
+  display: table;
+}
+
+.dragula-container {
+  display: table-cell;
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 50%;
+}
+
+.container:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.container div {
+  margin: 10px;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.2);
+  transition: all 0.4s ease-in-out;
+  cursor: move;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+.gu-unselectable {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+.dragula-container .ex-moved {
+  background-color: #e74c3c;
+}
+
+.handle {
+  padding: 0 5px;
+  margin-right: 5px;
+  background-color: rgba(0, 0, 0, 0.4);
+  cursor: move;
 }

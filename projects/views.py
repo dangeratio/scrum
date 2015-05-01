@@ -1,15 +1,18 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, ModelFormMixin, DeleteView
-
+from django.utils.safestring import mark_safe
 from django.db.models import Count
 
 from django import http
 from django.utils import timezone
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
 from django.template import context
 
+# ajax
+from django.shortcuts import render
+from django_ajax.decorators import ajax
 
 from projects.models import Project, Release, Item
 from projects import forms
@@ -229,7 +232,40 @@ class ReleaseQuickAdd(DetailView):
             backlog_flag = True
         context['backlog_flag'] = backlog_flag
 
+        # todo:
+
+        # pull backlog id
+        backlog = Release.objects.filter(title__contains='Backlog', project__id=project_id)
+        backlog_id = backlog[0].id
+        context['backlog_id'] = backlog_id
+
+        # pull "left" - the backlog data
+        left = Item.objects.filter(release__title__contains='Backlog', release__project__id=project_id)
+        context['left'] = left
+
+        # pull "right" - the current projects items
+        right = Item.objects.filter(release_id=context['release'].id)
+        context['right'] = right
+
         return context
+
+
+def release_quick_add_ajax(request, release_id, item_id):
+    # do stuff
+    # raise DebugMessage(item_id)
+
+    # perform update
+    curr_item = Item.objects.get(id=item_id)
+    curr_item.release_id = release_id
+    curr_item.save()
+
+    # get item title and release title
+    item_title = Item.objects.get(id=item_id).title
+    release_title = Release.objects.get(id=release_id).title
+
+    return_val = 'Moved item_title to release_title'.replace('item_title', item_title).replace('release_title', release_title)
+
+    return HttpResponse(content=return_val)
 
 
 class ReleaseCreate(CreateView):
