@@ -38,4 +38,12 @@
 
     </form>
 
+{% if project_id %}
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#id_project').val({{project_id}})
+    });
+    </script>
+{% endif %}
+
 {% endblock %}

@@ -23,3 +23,7 @@ font-awesome.min.css
 /projects/migrations/
 /releases/migrations/
 /items/migrations/
+
+# charts
+
+highcharts.js

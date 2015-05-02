@@ -40,4 +40,14 @@
 
     </form>
 
+{% if release_id %}
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#id_release').val({{release_id}})
+    });
+    </script>
+{% endif %}
+
+
+
 {% endblock %}

@@ -1,6 +1,8 @@
 $(document).ready(function() {
 
-    $('#status_field').fadeOut('fast');
+    var time_to_leave_status_messages = 30000
+
+    //$('#status_field').fadeOut('fast');
 
     dragula([backlog_items, release_items]).on('drop', function (el, container) {
         setTimeout(function () {
@@ -16,12 +18,19 @@ $(document).ready(function() {
 
         // alert(item_to_move + '|' + new_release);
 
-        var_url = '/projects/ajax/release_quick/';
+        var_url = '/ajax/release_quick/';
         var_url += new_release;
         var_url += '/';
         var_url += item_to_move;
 
         var_csrf_data = {"csrfmiddlewaretoken": csrf_token};
+
+        var new_el_id = guid();
+        var new_el_s = "<div id='" + new_el_id + "' class='alert alert-success alert-dismissible'>";
+        new_el_s += '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+        var new_el_s_error = "<div id='" + new_el_id + "' class='alert alert-danger alert-dismissible'>";
+        new_el_s_error += '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+        var new_el_e = "</div>";
 
         $.ajax({
             type: "POST",
@@ -29,33 +38,39 @@ $(document).ready(function() {
             data: var_csrf_data,
             dataType: '',
             success: function(data, textStatus, xhr) {
+                // show alert
                 setTimeout( function() {
-                    $('#status_field').html(data);
-                    $('#status_field').fadeIn('slow');
+                    curr_html = $('#status_field').html();
+                    $('#status_field').html(curr_html + new_el_s + data + new_el_e);
+                    $('#' + new_el_id).fadeIn('slow');
                 }, 0);
+                // remove alert
                 setTimeout( function() {
-                    $('#status_field').fadeOut('fast');
-                }, 500);
+                    $('#' + new_el_id).hide();
+                }, time_to_leave_status_messages);
             },
             error: function(xhr, textStatus, errorThrown) {
                 setTimeout( function() {
-                    $('#status_field').html(textStatus);
-                    $('#status_field').fadeIn('slow');
+                    curr_html = $('#status_field').html();
+                    $('#status_field').html(curr_html + new_el_s_error + textStatus + new_el_e);
+                    $('#' + new_el_id).fadeIn('slow');
                 }, 0);
                 setTimeout( function() {
-                    $('#status_field').fadeOut('slow');
-                }, 500);
+                    $('#' + new_el_id).fadeOut('slow');
+                }, time_to_leave_status_messages);
             }
         });
 
     }
 
-    /*
-    // success: ajax_success,
-    var status_div = document.getElementById('status_field');
-    function ajax_success(returned) {
-        status_div = returned;
-    }
-    */
-
 });
+
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}

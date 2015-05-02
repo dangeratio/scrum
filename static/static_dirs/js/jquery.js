@@ -24,7 +24,6 @@ $(document).ready(function() {
         <input type='button' onclick='javascript:id_number_increase()' value='+' /> \
         ");
 
-
 });
 
 

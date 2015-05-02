@@ -30,11 +30,6 @@ urlpatterns = patterns('',
     url(r'^(?P<project_id>\d+)/releases/(?P<release_id>\d+)/items/edit/(?P<pk>\d+)$', ItemUpdate.as_view()),
     url(r'^(?P<project_id>\d+)/releases/(?P<release_id>\d+)/items/delete/(?P<pk>\d+)$', ItemDelete.as_view()),
 
-    # ajax
-    #
-    url(r'^ajax/release_quick/(?P<release_id>\d+)/(?P<item_id>\d+)$', 'projects.views.release_quick_add_ajax'),
-
-
 )
 
 '''

@@ -14,4 +14,11 @@ urlpatterns = [
     url(r'^/$', RedirectView.as_view(url='/projects/', permanent=True)),
     url(r'^$', RedirectView.as_view(url='/projects/', permanent=True)),
 
+    # ajax
+    #
+    url(r'^ajax/release_quick/(?P<release_id>\d+)/(?P<item_id>\d+)$', 'projects.views.release_quick_add_ajax'),
+    url(r'^ajax/item_start/(?P<item_id>\d+)$', 'projects.views.item_start'),
+    url(r'^ajax/item_complete/(?P<item_id>\d+)$', 'projects.views.item_complete'),
+
+
 ]

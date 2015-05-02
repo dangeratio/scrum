@@ -3,6 +3,10 @@
 {% block pagetitle %}scrum - project view{% endblock %}
 {% block title %}project view{% endblock %}
 
+{% block head %}
+<script src="/static/js/highcharts.js"></script>
+{% endblock %}
+
 {% block left %}
 <div class="btn-group-vertical fill-h padding-bottom-20" role="group">
     <a class="btn btn-lg btn-warning" href="/projects/">Back</a>
@@ -18,21 +22,110 @@
 <!--<div class="list-group">-->
     <div class="panel-heading font-size-18">{{ project.title }} [{{ project.key }}]</div>
     <div class="panel-body p-no-margin"><u>Detail</u>{{ project.detail|safe|linebreaks }}</div>
+    <div id="burndown_chart" class="burndown_chart"></div>
+    <script type="text/javascript">
+        $(function () {
+            $('#burndown_chart').highcharts({
+                chart: {
+                    type: 'area',
+                    showAxes: false,
+                },
+                title: { text: '' },
+                plotOptions: {
+                    area: {
+                        stacking: 'normal',
+                        lineColor: '#fff',
+                        lineWidth: 0,
+                        marker: { enabled: false, },
+                        dataLabels: { enabled: false, },
+                    }
+                },
+                yAxis: {
+                    title: { text: '' },
+                    labels: { enabled: false, },
+                    gridLineWidth: 0,
+                },
+                xAxis: {
+                    title: { text: '' },
+                    labels: { enabled: false, },
+                    tickColor: '#fff',
+                },
+                series: [{
+                    name: 'Pending Issues',
+                    data: [0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987],
+                    color: '#E75F54',
+                    showInLegend: false,
+                }, {
+                    name: 'Fixed Issues',
+                    data: [0,0,0,1,1,2,3,5,8,13,21,34,55,89,144,233,377],
+                    color: '#336C48',
+                    showInLegend: false,
+                }]
+            });
+        });
+    </script>
 </div>
 
+<table border="0" cellpadding="0" cellspacing="0" class="release-details">
 {% for release in releases %}
+<script type="text/javascript">
+    $(function () {
+        Highcharts.getOptions().plotOptions.pie.colors = (function () {
+            return ['#c0c0c0', '#f0f0f0'];
+        }());
+
+        // Build the chart
+        $('#release_{{release.id}}_container').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: 0,
+                plotShadow: false
+            },
+            title: { text: '' },
+            tooltip: { pointFormat: '' },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: false,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false,
+                        format: '',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: '',
+                data: [
+                    ['Release Items', {{release.num_items}}],
+                    ['Other Items', ({{project_total_items}} - {{release.num_items}})]
+                ]
+            }]
+        });
+    });
+</script>
+<tr><td class="">
 <div class="panel panel-info">
     <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project.id }}/releases/{{ release.id }}">
-        {{ release.title }}
+        {{ release.title }} ({{ release.number }})
         <span class="badge">Items: {{ release.num_items }}</span>
     </a>
-    <div class="list-group-item p-no-margin">{{ release.detail|safe|linebreaks }}</div>
+    <div class="list-group-item p-no-margin">{{ release.detail|safe|linebreaks }}
+    </div>
+
     <!--
     <div class="list-group-item p-no-margin">project_id: {{ release.project_id }}</div>
     <div class="list-group-item p-no-margin">project_id_id: {{ release.project_id_id }}</div>
     <div class="list-group-item p-no-margin">id: {{ release.id }}</div>
     //-->
 </div>
+</td><td class="chart">
+    <div id="release_{{release.id}}_container" class="projects-release-chart"></div>
+</td></tr>
 {% endfor %}
+</table>
 
 {% endblock %}

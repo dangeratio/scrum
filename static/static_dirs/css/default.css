@@ -186,7 +186,7 @@ div.backlog_items, div.release_items {
     height: 100%;
 }
 
-div.backlog_items div, div.release_items div, td.title, div.status {
+div.backlog_items div, div.release_items div, td.title {
     padding: 10px;
     margin: 5px;
 }
@@ -276,4 +276,54 @@ table.drag-container {
   margin-right: 5px;
   background-color: rgba(0, 0, 0, 0.4);
   cursor: move;
+}
+
+.display-none {
+    display: none;
+}
+
+.status-overlay {
+    float: right;
+    text-align: left;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+    z-index: 1;
+    clear: both;
+}
+
+/* charts */
+
+.projects-release-chart {
+    height: 100px;
+    width: 100px;
+}
+
+table.release-details {
+    width: 100%;
+}
+
+td.chart {
+    width: 100px;
+    vertical-align: top;
+}
+
+div.burndown_chart {
+    width: 97%;
+    height: 300px;
+    margin: 10px;
+}
+
+/* right nav dates */
+
+.float-right {
+    float: right;
+}
+
+#start_link {
+    cursor: pointer;
+}
+
+#complete_link {
+    cursor: pointer;
 }

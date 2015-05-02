@@ -11,4 +11,5 @@ to use:
 
         python manage.py syncdb
 
+        For the charting functions download highcharts.js from http://code.highcharts.com/
 

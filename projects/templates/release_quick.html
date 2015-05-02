@@ -54,8 +54,6 @@
     </div>
 </td></tr></table>
 
-<div id='status_field' class="status">no status</div>
-
 <script type="text/javascript" src="/static/js/dragula.min.js"></script>
 
 <script type="text/javascript">
@@ -67,4 +65,8 @@ var backlog_items = document.getElementById("release{{backlog_id}}")
 <script type="text/javascript" src="/static/js/release_quick.js"></script>
 
 
+{% endblock %}
+
+{% block status %}
+<div id='status_field' class="status status-overlay"></div>
 {% endblock %}

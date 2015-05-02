@@ -1,22 +1,12 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, ModelFormMixin, DeleteView
-from django.utils.safestring import mark_safe
 from django.db.models import Count
-
-from django import http
-from django.utils import timezone
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render_to_response
-from django.template import context
-
-# ajax
-from django.shortcuts import render
-from django_ajax.decorators import ajax
+from django.http import HttpResponse
+from datetime import datetime
 
 from projects.models import Project, Release, Item
 from projects import forms
-from projects import templatetags
 
 
 # usage: raise DebugMessage('asdf')
@@ -74,8 +64,14 @@ class ProjectDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ProjectDetail, self).get_context_data(**kwargs)
         project_id = self.kwargs['pk']
-        releases = Release.objects.filter(project=project_id).annotate(num_items=Count('item'))
+
+        # provide release objects for the list of releases below the project details
+        releases = Release.objects.filter(project=project_id).annotate(num_items=Count('item')).order_by('number')
         context['releases'] = releases
+
+        # provide total project items for charting
+        project_total_items = Item.objects.filter(release__project__id=project_id).count()
+        context['project_total_items'] = project_total_items
 
         return context
 
@@ -141,6 +137,8 @@ class ProjectCreateQuick(ProjectCreate):
                 release_id=backlog_object_id,
                 title=values[0],
                 detail=values[1],
+                date_started=None,
+                date_completed=None,
             )
             new_item.save()
 
@@ -248,24 +246,6 @@ class ReleaseQuickAdd(DetailView):
         context['right'] = right
 
         return context
-
-
-def release_quick_add_ajax(request, release_id, item_id):
-    # do stuff
-    # raise DebugMessage(item_id)
-
-    # perform update
-    curr_item = Item.objects.get(id=item_id)
-    curr_item.release_id = release_id
-    curr_item.save()
-
-    # get item title and release title
-    item_title = Item.objects.get(id=item_id).title
-    release_title = Release.objects.get(id=release_id).title
-
-    return_val = 'Moved item_title to release_title'.replace('item_title', item_title).replace('release_title', release_title)
-
-    return HttpResponse(content=return_val)
 
 
 class ReleaseCreate(CreateView):
@@ -436,3 +416,72 @@ class ItemDelete(DeleteView):
         success_url = '/projects/project_id/releases/release_id'.replace('project_id', project_id).replace('release_id', release_id)
         return success_url
 
+
+# ajax "views"
+#
+def release_quick_add_ajax(request, release_id, item_id):
+
+    # perform update
+    curr_item = Item.objects.get(id=item_id)
+    curr_item.release_id = release_id
+    curr_item.save()
+
+    # get item title and release title
+    item_title = Item.objects.get(id=item_id).title
+    release_title = Release.objects.get(id=release_id).title
+
+    return_val = 'Moved Item: [<b>item_title</b>] to Release: [<b>release_title</b>]'.replace('item_title', item_title).replace('release_title', release_title)
+
+    return HttpResponse(content=return_val)
+
+
+def item_start(request, item_id):
+
+    # perform update
+    curr_item = Item.objects.get(id=item_id)
+    d = datetime.now()
+    curr_item.date_started, date_started = d, d.strftime('%b DAY, %Y, HOUR:%M%p')
+    curr_item.save()
+
+    # item_title = curr_item.title
+    day = d.strftime('%d')
+    if day[0] == '0':
+        day = day[1:]
+
+    hour = d.strftime('%I')
+    if hour[0] == '0':
+        hour = hour[1:]
+
+    date_started = date_started.replace('DAY', day)
+    date_started = date_started.replace('HOUR', hour)
+    return_val = date_started.replace('AM', ' a.m.').replace('PM', ' p.m.')
+
+    return HttpResponse(content=return_val)
+
+
+def item_complete(request, item_id):
+
+    # perform update
+    curr_item = Item.objects.get(id=item_id)
+    d = datetime.now()
+    curr_item.date_completed, date_completed = d, d.strftime('%b DAY, %Y, HOUR:%M%p')
+    curr_item.save()
+
+    # item_title = curr_item.title
+    day = d.strftime('%d')
+    if day[0] == '0':
+        day = day[1:]
+
+    hour = d.strftime('%I')
+    if hour[0] == '0':
+        hour = hour[1:]
+
+    date_completed = date_completed.replace('DAY', day)
+    date_completed = date_completed.replace('HOUR', hour)
+    return_val = date_completed.replace('AM', ' a.m.').replace('PM', ' p.m.')
+
+    return HttpResponse(content=return_val)
+
+# try %c?
+# %b %d, %Y, %I:%M%p
+# May 2, 2015, 3:55 a.m.
