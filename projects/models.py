@@ -31,6 +31,9 @@ class Release(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=NEW, )
     # is_backlog = models.BooleanField(default=False, )
 
+    date_created = models.DateTimeField(name='date_created', db_column='date_created', auto_now_add=True, )
+    date_modified = models.DateTimeField(name='date_modified', db_column='date_modified', auto_now=True, )
+
     def __str__(self):
         return self.title
 
@@ -72,7 +75,7 @@ class Item(models.Model):
     priority = models.IntegerField(name='priority', db_column='priority', choices=PRIORITY_CHOICES, default=MED, )
     status = models.IntegerField(name='status', db_column='status', choices=STATUS_CHOICES, default=NEW, )
 
-    date_created = models.DateTimeField(name='date_created', db_column='date_created', auto_now_add=True)
+    date_created = models.DateTimeField(name='date_created', db_column='date_created', auto_now_add=True, )
     date_modified = models.DateTimeField(name='date_modified', db_column='date_modified', auto_now=True, )
     date_started = models.DateTimeField(name='date_started', db_column='date_started', blank=True, null=True, default='2015-01-01 00:00', )
     date_completed = models.DateTimeField(name='date_completed', db_column='date_completed', blank=True, null=True, default='2015-01-01 00:00', )

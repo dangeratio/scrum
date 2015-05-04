@@ -3,10 +3,13 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, ModelFormMixin, DeleteView
 from django.db.models import Count
 from django.http import HttpResponse
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from projects.models import Project, Release, Item
+from projects.models import Project, Release, Item, ItemLog
 from projects import forms
+
+
+number_of_days_to_chart = 10
 
 
 # usage: raise DebugMessage('asdf')
@@ -72,6 +75,8 @@ class ProjectDetail(DetailView):
         # provide total project items for charting
         project_total_items = Item.objects.filter(release__project__id=project_id).count()
         context['project_total_items'] = project_total_items
+
+        check_project_reporting(project_id)
 
         return context
 
@@ -193,8 +198,39 @@ class ReleaseDetail(DetailView):
         project_id = self.kwargs.get('project_id')
         release_id = self.kwargs.get('pk')
         context['project_id'] = project_id
+
+        # ***********************
+        # Need to modify "items" query to only return open objects (non 4, 5 status objects)
+
         items = Item.objects.filter(release=release_id).order_by('-priority')
-        context['items'] = items
+        # context['items'] = items
+
+        # ***********************
+        # Additional set of closed items
+        # closed_items = Item.objects.filter(release=release_id, status=Item.CLOSED_ACTION)
+
+        closed_items = []
+        open_items = []
+        closed_items_total = 0
+        open_items_total = 0
+
+        for item in items:
+            if item.status == 4 or item.status == 5:
+                closed_items_total += 1
+                closed_items.append(item)
+            else:
+                open_items.append(item)
+
+        total_items = closed_items_total + open_items_total
+        percent_complete = 0
+        if closed_items_total == 0:
+            percent_complete = 0
+        else:
+            percent_complete = closed_items_total / total_items
+
+        context['percent_complete'] = percent_complete
+        context['open_items'] = open_items
+        context['closed_items'] = closed_items
 
         # set backlog_flag true if backlog is in the title of the release
         title = context['release'].title
@@ -459,12 +495,20 @@ def item_start(request, item_id):
     return HttpResponse(content=return_val)
 
 
-def item_complete(request, item_id):
+from models import Item
+
+
+def item_complete_action(request, item_id, action=True):
 
     # perform update
     curr_item = Item.objects.get(id=item_id)
     d = datetime.now()
-    curr_item.date_completed, date_completed = d, d.strftime('%b DAY, %Y, HOUR:%M%p')
+    curr_item.date_completed = d
+    if action:
+        curr_item.status = Item.CLOSED_ACTION
+    else:
+        curr_item.status = Item.CLOSED_NO_ACTION
+    curr_item.status
     curr_item.save()
 
     # item_title = curr_item.title
@@ -476,12 +520,48 @@ def item_complete(request, item_id):
     if hour[0] == '0':
         hour = hour[1:]
 
+    date_completed = d.strftime('%b DAY, %Y, HOUR:%M%p')
     date_completed = date_completed.replace('DAY', day)
     date_completed = date_completed.replace('HOUR', hour)
     return_val = date_completed.replace('AM', ' a.m.').replace('PM', ' p.m.')
 
     return HttpResponse(content=return_val)
 
-# try %c?
-# %b %d, %Y, %I:%M%p
-# May 2, 2015, 3:55 a.m.
+
+def item_complete_no_action(request, item_id, action=False):
+    return item_complete_action(request, item_id, action)
+
+
+# details
+
+def check_project_reporting(project_id):
+
+    '''
+    days = number_of_days_to_chart
+
+    z=''
+    # go through last N days
+    for i in range(days, 0, -1):
+        d = datetime.now().date()
+        data = ItemLog.objects.filter(day=d)
+        if not data:
+            # generate data for the day
+            ed = d + timedelta(days=1)
+            Item.objects.filter(date_created<ed, date_completed=d)
+
+    # if no data, build data for that day, project_id
+    raise DebugMessage(z)
+
+    last_day_query = 'select id, max(day) as max_date from projects_itemlog where project_id_id = ' + project_id
+    last_day = Project.objects.raw(last_day_query)
+
+    if last_day == None:
+        raise DebugMessage(None)
+    else:
+        raise DebugMessage('1')
+    '''
+
+    pass
+
+
+

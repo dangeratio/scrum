@@ -11,16 +11,31 @@
     <a class="btn btn-lg btn-default" href="/projects/{{ project_id }}/releases/{{ release_id }}/items/edit/{{ item.id }}">Edit item</a>
     <a class="btn btn-lg btn-danger" href="/projects/{{ project_id }}/releases/{{ release_id }}/items/delete/{{ item.id }}" aria-disabled="true">Delete item</a>
 </div>
-
 {% endblock %}
 
 {% block right %}
 <div class="panel panel-primary fill-h">
     <div class="list-group-item">Created:<br> {{ item.date_created }}</div>
     <div class="list-group-item">Modified:<br> {{ item.date_modified }}</div>
-    <div class="list-group-item" id="date_started">Start:{% if not item.date_started %}<a id='start_link' class="fa fa-play float-right" onclick="trigger_start('{{item.id}}');"></a>{% endif %}<br> {{ item.date_started }}</div>
-    <div class="list-group-item" id="date_completed">Completed:<a id='complete_link' class="fa fa-check-square-o float-right" onclick="trigger_complete('{{item.id}}')"></a><br> {{ item.date_completed }} </div>
-    <div class="list-group-item">Percent Done:<br> {{ item.percent_done }}</div>
+    <div class="list-group-item" id="date_started">
+        Start:<br>
+        {% if not item.date_started %}
+            <button class="fa fa-play full-width btn btn-primary btn-sm margin-btm-5" onclick="trigger_start('{{item.id}}');">Start Item</button>
+        {% else %}
+            {{ item.date_started }}
+        {% endif %}
+
+    </div>
+    <div class="list-group-item" id="date_completed">
+        Completed:<br>
+        {% if not item.date_completed %}
+            <button class="fa fa-check-square-o full-width btn btn-primary btn-sm margin-btm-5" onclick="trigger_complete_action('{{item.id}}')">Complete, With Action</button>
+            <button class="fa fa-check-square-o full-width btn btn-primary btn-sm margin-btm-5" onclick="trigger_complete_no_action('{{item.id}}')">Complete, No Action</button>
+        {% else %}
+            {{ item.date_completed }}
+        {% endif %}
+
+    </div>
 </div>
 {% endblock %}
 
@@ -33,7 +48,7 @@
     <div class="list-group-item"><u>Priority</u><br> {{ item.priority|show_priority }}</div>
     <div class="list-group-item"><u>Effort</u><br> {{ item.effort }}</div>
     <div class="list-group-item"><u>Release</u><br> {{ item.release }}</div>
-    <div class="list-group-item"><u>Status</u><br> {{ item.status }}</div>
+    <div class="list-group-item"><u>Status</u><br> {{ item.status|status }}</div>
     <!--<div class="list-group-item"><u>Project</u><br> {{ item.type }}</div>-->
     <div class="list-group-item"><u>Owner</u><br> {{ item.owner }}</div>
 </div>

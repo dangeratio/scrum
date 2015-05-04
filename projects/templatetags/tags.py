@@ -2,8 +2,9 @@
 #
 
 from projects.models import Item
-
 from django import template
+
+
 register = template.Library()
 
 
@@ -21,6 +22,7 @@ class DebugMessage(Exception):
 def field_class(ob):
     return ob.__class__.__name__
 
+
 @register.filter('show_priority')
 def show_priority(ob):
     # Item.PRIORITY_CHOICES[ob][0] = the number (IE: 3)
@@ -32,6 +34,7 @@ def show_priority(ob):
         return Item.PRIORITY_CHOICES[ob - 1][1]
     else:
         return 'None'
+
 
 @register.filter('priority_css')
 def priority_css(ob):
@@ -54,6 +57,7 @@ def priority_css(ob):
 
     return css
 
+
 @register.filter('return_value')
 def return_value(obj, arg):
     # raise DebugMessage(ob)
@@ -74,6 +78,7 @@ class SetVarNode(template.Node):
         context[self.var_name] = value
         return u""
 
+
 def set_var(parser, token):
     """
         {% set <var_name>  = <var_value> %}
@@ -84,3 +89,14 @@ def set_var(parser, token):
     return SetVarNode(parts[1], parts[3])
 
 register.tag('set', set_var)
+
+
+@register.filter('percent')
+def percentage(value):
+    return '{0:.2%}'.format(value)
+
+
+@register.filter('status')
+def status(value):
+    return Item.STATUS_CHOICES[value][1]
+

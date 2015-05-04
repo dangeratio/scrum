@@ -18,7 +18,8 @@ urlpatterns = [
     #
     url(r'^ajax/release_quick/(?P<release_id>\d+)/(?P<item_id>\d+)$', 'projects.views.release_quick_add_ajax'),
     url(r'^ajax/item_start/(?P<item_id>\d+)$', 'projects.views.item_start'),
-    url(r'^ajax/item_complete/(?P<item_id>\d+)$', 'projects.views.item_complete'),
+    url(r'^ajax/item_complete_action/(?P<item_id>\d+)$', 'projects.views.item_complete_action'),
+    url(r'^ajax/item_complete_no_action/(?P<item_id>\d+)$', 'projects.views.item_complete_no_action'),
 
 
 ]

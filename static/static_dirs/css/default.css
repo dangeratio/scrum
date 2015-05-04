@@ -20,7 +20,9 @@
   src: local("Ubuntu"), url("http://fonts.gstatic.com/s/ubuntu/v7/zvCUQcxqeoKhyOlbifSAaevvDin1pK8aKteLpeZ5c0A.woff2") format("woff2"), url("http://fonts.gstatic.com/s/ubuntu/v7/vRvZYZlUaogOuHbBTT1SNevvDin1pK8aKteLpeZ5c0A.woff") format("woff");
 }
 
-
+body {
+    background-color: #393939;
+}
 
 /* page layout */
 
@@ -125,7 +127,8 @@ fieldset {
 
 .parent-hover-style {
     /* background: #a7cadb; */
-    border-color: black;
+    border-color: #3074ae;
+    /* border-color: black; */
 }
 
 /* used for most headers */
@@ -297,6 +300,7 @@ table.drag-container {
 .projects-release-chart {
     height: 100px;
     width: 100px;
+    background-color: #393939;
 }
 
 table.release-details {
@@ -306,6 +310,7 @@ table.release-details {
 td.chart {
     width: 100px;
     vertical-align: top;
+    background-color: #393939;
 }
 
 div.burndown_chart {
@@ -326,4 +331,8 @@ div.burndown_chart {
 
 #complete_link {
     cursor: pointer;
+}
+
+.margin-btm-5 {
+    margin-bottom: 5px;
 }

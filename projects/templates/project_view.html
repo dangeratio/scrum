@@ -71,12 +71,14 @@
 <script type="text/javascript">
     $(function () {
         Highcharts.getOptions().plotOptions.pie.colors = (function () {
-            return ['#c0c0c0', '#f0f0f0'];
+            return ['#c0c0c0', '#393939'];
+            // return ['#c0c0c0', '#f0f0f0'];
         }());
 
         // Build the chart
         $('#release_{{release.id}}_container').highcharts({
             chart: {
+                backgroundColor: '#393939',
                 plotBackgroundColor: null,
                 plotBorderWidth: 0,
                 plotShadow: false

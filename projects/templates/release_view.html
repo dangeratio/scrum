@@ -24,9 +24,9 @@
 <div class="panel panel-primary fill-h">
     <div class="list-group-item">Created:<br> {{ release.date_created }}</div>
     <div class="list-group-item">Modified:<br> {{ release.date_modified }}</div>
-    <div class="list-group-item">Start:<br> {{ release.date_start }}</div>
-    <div class="list-group-item">Complete:<br> {{ release.date_complete }}</div>
-    <div class="list-group-item">Percent Done:<br> {{ release.percent_done }}</div>
+    <!-- <div class="list-group-item">Start:<br> {{ release.date_start }}</div> -->
+    <!-- <div class="list-group-item">Complete:<br> {{ release.date_complete }}</div> -->
+    <div class="list-group-item">Percent Complete:<br> {{ percent_complete|percent }}</div>
 </div>
 
 {% endblock %}
@@ -42,7 +42,7 @@
 
 {% set flag = 1 %}
 <table class="release_items">
-{% for item in items %}
+{% for item in open_items %}
 
     {% if flag = 1 %}
     <tr><td class="left">
@@ -63,6 +63,29 @@
     {% endif %}
 
 {% endfor %}
+
+{% for item in closed_items %}
+
+    {% if flag = 1 %}
+    <tr><td class="left">
+        <div class="panel panel-default">
+            <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project_id }}/releases/{{ release.id }}/items/{{ item.id }}">{{ item.title }}</a>
+            <div class="panel-body p-no-margin"><u>Detail</u>{{ item.detail|safe|linebreaks }}</div>
+        </div>
+    </td>
+    {% set flag = 0 %}
+    {% else %}
+    <td class="spacer"></td><td class="right">
+        <div class="panel panel-default">
+            <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project_id }}/releases/{{ release.id }}/items/{{ item.id }}">{{ item.title }}</a>
+            <div class="panel-body p-no-margin"><u>Detail</u>{{ item.detail|safe|linebreaks }}</div>
+        </div>
+    </td></tr>
+    {% set flag = 1 %}
+    {% endif %}
+
+{% endfor %}
+
 {% if flag = 0 %}
     <td></td></td></tr>
 {% endif %}
