@@ -13,3 +13,5 @@ to use:
 
         For the charting functions download highcharts.js from http://code.highcharts.com/
 
+![screenshot of scrum](http://i.imgur.com/GFLnBW5.png)
+
