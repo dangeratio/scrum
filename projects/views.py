@@ -9,7 +9,7 @@ from projects.models import Project, Release, Item, ItemLog
 from projects import forms
 
 
-number_of_days_to_chart = 10
+number_of_days_to_chart = 30
 
 
 # usage: raise DebugMessage('asdf')
@@ -76,7 +76,50 @@ class ProjectDetail(DetailView):
         project_total_items = Item.objects.filter(release__project__id=project_id).count()
         context['project_total_items'] = project_total_items
 
+        # build any missing days in the reporting (for last N days, set number_of_days_in_chart at the top of this file)
         check_project_reporting(project_id)
+
+        # get data for chart
+        item_logs_query = 'SELECT * FROM (SELECT * FROM projects_itemlog WHERE project_id_id = "{project_id}" ORDER BY day DESC LIMIT {days}) ORDER BY day ASC'
+        item_logs_query = item_logs_query.replace("{project_id}", project_id)
+        item_logs_query = item_logs_query.replace("{days}", str(number_of_days_to_chart))
+        item_logs = ItemLog.objects.raw(item_logs_query)
+        # ************************************************** need to add an order_by and limit the results to the last N
+
+        # build data set for the main chart
+        open_issues_data = ''
+        closed_issues_data = ''
+        date_data = ''
+        for log in item_logs:
+            open_issues_data += str(log.total_open) + ','
+            closed_issues_data += str(log.total_closed) + ','
+            date_data += "'" + str(log.day.strftime("%Y-%m-%d")) + "', "
+
+        today_open_query = 'SELECT project_id_id as id, count(*) as total FROM projects_item as i ' \
+                           'INNER JOIN projects_release as r ON r.id = i.release_id_id ' \
+                           'WHERE project_id_id = "{project_id}" and i.status != 4 and i.status != 5 '
+        today_open_query = today_open_query.replace("{project_id}", project_id)
+        today_open = Item.objects.raw(today_open_query)[0]
+        # today_open.total
+
+        today_closed_query = 'SELECT project_id_id as id, count(*) as total FROM projects_item as i ' \
+                             'INNER JOIN projects_release as r ON r.id = i.release_id_id ' \
+                             'WHERE project_id_id = "{project_id}" and (i.status = 4 or i.status = 5) '
+        today_closed_query = today_closed_query.replace("{project_id}", project_id)
+        today_closed = Item.objects.raw(today_closed_query)[0]
+        # today_closed.total
+
+        open_issues_data += str(today_open.total)
+        closed_issues_data += str(today_closed.total)
+        date_data += "'" + datetime.now().strftime("%Y-%m-%d") + "'"
+
+        # remove trailing comma
+        # open_issues_data = open_issues_data[:-1]
+        # closed_issues_data = closed_issues_data[:-1]
+
+        context['open_issues_data'] = open_issues_data
+        context['closed_issues_data'] = closed_issues_data
+        context['date_data'] = date_data
 
         return context
 
@@ -336,6 +379,12 @@ class ReleaseDelete(DeleteView):
         context = super(ReleaseDelete, self).get_context_data(**kwargs)
         project_id = self.kwargs.get('project_id')
         context['project_id'] = project_id
+
+        if 'backlog' in context['release'].title.lower():
+            context['error'] = True
+        else:
+            context['error'] = False
+
         return context
 
     def get_success_url(self):
@@ -536,22 +585,50 @@ def item_complete_no_action(request, item_id, action=False):
 
 def check_project_reporting(project_id):
 
-    '''
     days = number_of_days_to_chart
 
-    z=''
+    z = ''
     # go through last N days
     for i in range(days, 0, -1):
+
         d = datetime.now().date()
-        data = ItemLog.objects.filter(day=d)
+        d = d - timedelta(days=i)
+
+        data = ItemLog.objects.filter(day=d, project_id=project_id)
+
         if not data:
-            # generate data for the day
+            # no data for this day, generate data for the day
             ed = d + timedelta(days=1)
-            Item.objects.filter(date_created<ed, date_completed=d)
 
-    # if no data, build data for that day, project_id
-    raise DebugMessage(z)
+            total_items = Item.objects.filter(release__project__id=project_id).count()
+            total_open_query = 'SELECT project_id_id as id, count(*) as total FROM projects_item as i ' \
+                               'INNER JOIN projects_release as r ON r.id = i.release_id_id ' \
+                               'WHERE project_id_id = "{project_id}" and i.date_created < "{ED}" and (i.date_completed > "{D}" or i.date_completed is null)'
+            total_open_query = total_open_query.replace('{ED}', ed.strftime("%Y-%m-%d %H:%M:%S"))
+            total_open_query = total_open_query.replace('{D}', d.strftime("%Y-%m-%d %H:%M:%S"))
+            total_open_query = total_open_query.replace('{project_id}', project_id)
 
+            total_open = Item.objects.raw(total_open_query)[0]
+
+            total_closed_query = 'SELECT project_id_id as id, count(*) as total FROM projects_item as i ' \
+                                 'INNER JOIN projects_release as r ON r.id = i.release_id_id ' \
+                                 'WHERE project_id_id = "{project_id}" and i.date_created < "{ED}" and i.date_completed < "{D}"'
+            total_closed_query = total_closed_query.replace('{ED}', ed.strftime("%Y-%m-%d %H:%M:%S"))
+            total_closed_query = total_closed_query.replace('{D}', d.strftime("%Y-%m-%d %H:%M:%S"))
+            total_closed_query = total_closed_query.replace('{project_id}', project_id)
+
+            total_closed = Item.objects.raw(total_closed_query)[0]
+
+            new_log_entry = ItemLog(
+                project_id=project_id,
+                day=d,
+                total_open=total_open.total,
+                total_closed=total_closed.total,
+            )
+
+            new_log_entry.save()
+
+    '''
     last_day_query = 'select id, max(day) as max_date from projects_itemlog where project_id_id = ' + project_id
     last_day = Project.objects.raw(last_day_query)
 
@@ -560,8 +637,4 @@ def check_project_reporting(project_id):
     else:
         raise DebugMessage('1')
     '''
-
-    pass
-
-
 

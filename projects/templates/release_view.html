@@ -8,13 +8,13 @@
 {% block left %}
 
 <div class="btn-group-vertical fill-h padding-bottom-20" role="group">
-    <a class="btn btn-lg btn-warning" href="/projects/{{ project_id }}">Back</a>
+    <a class="btn btn-lg btn-warning" href="/projects/{{ project_id }}">Back <i class="fa fa-arrow-left"></i></a>
     {% if backlog_flag = False %}
-    <a class="btn btn-lg btn-default" href="/projects/{{ project_id }}/releases/quick/{{ release.id }}">Add from Backlog</a>
+    <a class="btn btn-lg btn-success" href="/projects/{{ project_id }}/releases/quick/{{ release.id }}">Add from Backlog</a>
     {% endif %}
-    <a class="btn btn-lg btn-default" href="/projects/{{ project_id }}/releases/{{ release.id }}/items/create">New Item</a>
+    <a class="btn btn-lg btn-success" href="/projects/{{ project_id }}/releases/{{ release.id }}/items/create">New Item <i class="fa fa-file-text-o"></i></a>
     <a class="btn btn-lg btn-default" href="/projects/{{ project_id }}/releases/edit/{{ release.id }}">Edit Release</a>
-    <a class="btn btn-lg btn-danger" href="/projects/{{ project_id }}/releases/delete/{{ release.id }}">Delete Release</a>
+    <a class="btn btn-lg btn-danger" href="/projects/{{ project_id }}/releases/delete/{{ release.id }}">Delete Release <i class="fa fa-trash-o"></i></a>
 </div>
 
 {% endblock %}

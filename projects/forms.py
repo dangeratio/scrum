@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import PermissionDenied
 from django.forms import widgets
 from projects.models import Project, Release, Item
 
@@ -11,6 +12,16 @@ from itertools import chain
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 '''
+
+
+# usage: raise DebugMessage('asdf')
+class DebugMessage(Exception):
+
+    def __init__(self, msg="Something went wrong."):
+        self.msg = msg
+
+    def __str__(self):
+        return repr(self.msg)
 
 
 class ProjectForm(forms.ModelForm):
@@ -27,6 +38,17 @@ class ReleaseForm(forms.ModelForm):
         model = Release
 
         fields = '__all__'
+
+    def clean_title(self):
+        data = self.cleaned_data['title']
+
+        if "backlog" in data:
+            raise forms.ValidationError("You cannot have backlog in a release title.")
+
+        # Always return the cleaned data, whether you have changed it or
+        # not.
+        return data
+
 
 
 class ItemForm(forms.ModelForm):

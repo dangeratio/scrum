@@ -12,8 +12,8 @@
 
 {% block left %}
 <div class="btn-group-vertical fill-h padding-bottom-20" role="group">
-    <a class="btn btn-lg btn-warning" href="/projects/"><i class="fa fa-times"></i> Cancel</a>
-    {% if project.id %}<a class="btn btn-lg btn-danger" href="/projects/delete/{{ project.id }}"><i class="fa fa-trash-o"></i> Delete</a>{% endif %}
+    <a class="btn btn-lg btn-warning" href="/projects/">Cancel <i class="fa fa-times"></i></a>
+    {% if project.id %}<a class="btn btn-lg btn-danger" href="/projects/delete/{{ project.id }}">Delete <i class="fa fa-trash-o"></i></a>{% endif %}
 </div>
 {% endblock %}
 
@@ -28,7 +28,7 @@
     {% csrf_token %}
 
     <div class="panel panel-primary">
-        <div class="panel-heading">
+        <div class="panel-heading font-size-18">
             {% if project.id %}edit project{% else %}create project{% endif %}
         </div>
 
@@ -38,7 +38,7 @@
         </div>
         {% endfor %}
         <div class="list-group-item">
-            <button type="submit" class="btn btn-lg btn-success list-group-item"><i class="fa fa-check"></i> Submit</button>
+            <button type="submit" class="btn btn-lg btn-success list-group-item">Submit <i class="fa fa-check"></i></button>
         </div>
 
     </div>

@@ -12,8 +12,8 @@
     {% for project in object_list %}
         <a class="list-group-item font-size-18" href="/projects/{{ project.id }}">
             {{ project.title }}
-        <span class="badge badge-primary">Releases: {{ release_totals|return_value:project.id }}</span>
-        <span class="badge badge-primary">Items: {{ item_totals|return_value:project.id }}</span>
+        <span class="badge badge-primary align-fix">Releases: {{ release_totals|return_value:project.id }}</span>
+        <span class="badge badge-primary align-fix">Items: {{ item_totals|return_value:project.id }}</span>
         </a>
     {% endfor %}
 </div>

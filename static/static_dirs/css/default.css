@@ -336,3 +336,9 @@ div.burndown_chart {
 .margin-btm-5 {
     margin-bottom: 5px;
 }
+
+/* project index */
+
+.align-fix {
+    margin-top: 3px;
+}

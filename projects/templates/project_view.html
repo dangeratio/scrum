@@ -9,10 +9,10 @@
 
 {% block left %}
 <div class="btn-group-vertical fill-h padding-bottom-20" role="group">
-    <a class="btn btn-lg btn-warning" href="/projects/">Back</a>
-    <a class="btn btn-lg btn-default" href="/projects/{{ project.id }}/releases/create">New Release</a>
+    <a class="btn btn-lg btn-warning" href="/projects/">Back <i class="fa fa-arrow-left"></i></a>
+    <a class="btn btn-lg btn-success" href="/projects/{{ project.id }}/releases/create">New Release <i class="fa fa-file-text-o"></i></a>
     <a class="btn btn-lg btn-default" href="/projects/edit/{{ project.id }}">Edit Project</a>
-    <a class="btn btn-lg btn-danger" href="/projects/delete/{{ project.id }}" aria-disabled="true">Delete Project</a>
+    <a class="btn btn-lg btn-danger" href="/projects/delete/{{ project.id }}" aria-disabled="true">Delete Project <i class="fa fa-trash-o"></i></a>
 </div>
 {% endblock %}
 
@@ -47,17 +47,20 @@
                 },
                 xAxis: {
                     title: { text: '' },
-                    labels: { enabled: false, },
+                    labels: { enabled: true, },
                     tickColor: '#fff',
+                    categories: [{{date_data|safe}}],
                 },
                 series: [{
                     name: 'Pending Issues',
-                    data: [0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987],
+                    // data: [0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987],
+                    data: [{{open_issues_data}}],
                     color: '#E75F54',
                     showInLegend: false,
                 }, {
                     name: 'Fixed Issues',
-                    data: [0,0,0,1,1,2,3,5,8,13,21,34,55,89,144,233,377],
+                    // data: [0,0,0,1,1,2,3,5,8,13,21,34,55,89,144,233,377],
+                    data: [{{closed_issues_data}}],
                     color: '#336C48',
                     showInLegend: false,
                 }]

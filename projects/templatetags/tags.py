@@ -98,5 +98,5 @@ def percentage(value):
 
 @register.filter('status')
 def status(value):
-    return Item.STATUS_CHOICES[value][1]
+    return Item.STATUS_CHOICES[value-1][1]
 

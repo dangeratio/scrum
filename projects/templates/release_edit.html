@@ -12,8 +12,8 @@
 
 {% block left %}
 <div class="btn-group-vertical fill-h padding-bottom-20" role="group">
-    <a class="btn btn-lg btn-warning" href="/projects/{{ project_id }}"><i class="fa fa-times"></i> Cancel</a>
-    {% if release.id %}<a class="btn btn-lg btn-danger" href="/releases/delete/{{ release.id }}"><i class="fa fa-trash-o"></i> Delete</a>{% endif %}
+    <a class="btn btn-lg btn-warning" href="/projects/{{ project_id }}">Cancel <i class="fa fa-times"></i></a>
+    {% if release.id %}<a class="btn btn-lg btn-danger" href="/releases/delete/{{ release.id }}">Delete <i class="fa fa-trash-o"></i></a>{% endif %}
 </div>
 {% endblock %}
 
@@ -25,14 +25,14 @@
 
 
     <div class="panel panel-primary">
-        <div class="panel-heading">{% if release.id %}edit release{% else %}create release{% endif %}</div>
+        <div class="panel-heading font-size-18">{% if release.id %}Edit Release{% else %}Create Release{% endif %}</div>
         {% for field in form %}
         <div class="list-group-item">
             {% bootstrap_field field %}
         </div>
         {% endfor %}
         <div class="list-group-item">
-            <button type="submit" class="btn btn-lg btn-success list-group-item"><i class="fa fa-check"></i> Submit</button>
+            <button type="submit" class="btn btn-lg btn-success list-group-item">Submit <i class="fa fa-check"></i></button>
         </div>
     </div>
 
