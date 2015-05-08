@@ -3,6 +3,7 @@
 
 from projects.models import Item
 from django import template
+from projects.views import get_formatted_date_time
 
 
 register = template.Library()
@@ -100,3 +101,13 @@ def percentage(value):
 def status(value):
     return Item.STATUS_CHOICES[value-1][1]
 
+
+@register.filter('trim_whitespace')
+def trim_whitespace(value):
+    value = value.replace(" ", "")
+    return value
+
+
+@register.filter('format_date_time')
+def format_date_time(value):
+    return get_formatted_date_time(value)

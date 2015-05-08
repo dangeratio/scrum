@@ -2,10 +2,10 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, ModelFormMixin, DeleteView
 from django.db.models import Count
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from datetime import datetime, timedelta
 
-from projects.models import Project, Release, Item, ItemLog
+from projects.models import Project, Release, Item, ItemLog, ItemComments
 from projects import forms
 
 
@@ -179,6 +179,29 @@ class ProjectCreateQuick(ProjectCreate):
 
         # create sub items under the backlog
         quick_items = self.request.POST['quick_items']
+
+        for line in iter(quick_items.splitlines()):
+            value_result = ''
+            if "," in line:
+                values = line.split(',')
+                for value in values[1:]:
+                    value_result += value + ','
+            else:
+                values[0] = line
+
+            value_result = value_result[0:-1]
+
+            new_item = Item.objects.create(
+                release_id=backlog_object_id,
+                title=values[0],
+                detail=value_result,
+                date_started=None,
+                date_completed=None,
+            )
+            new_item.save()
+
+        '''
+        # old version, replaced with newer version with some bug fixes above
         for lines in iter(quick_items.splitlines()):
             values = lines.split(',')
             new_item = Item.objects.create(
@@ -189,6 +212,7 @@ class ProjectCreateQuick(ProjectCreate):
                 date_completed=None,
             )
             new_item.save()
+        '''
 
         return super(ModelFormMixin, self).form_valid(form)
 
@@ -257,23 +281,27 @@ class ReleaseDetail(DetailView):
         closed_items_total = 0
         open_items_total = 0
 
+        total_count = 0
         for item in items:
+            total_count += 1
             if item.status == 4 or item.status == 5:
                 closed_items_total += 1
                 closed_items.append(item)
             else:
                 open_items.append(item)
 
-        total_items = closed_items_total + open_items_total
-        percent_complete = 0
-        if closed_items_total == 0:
-            percent_complete = 0
-        else:
-            percent_complete = closed_items_total / total_items
-
-        context['percent_complete'] = percent_complete
         context['open_items'] = open_items
         context['closed_items'] = closed_items
+
+        percent_complete = 0.0
+        if total_count == 0:
+            percent_complete = 0.0
+        else:
+            percent_complete = float(closed_items_total) / float(total_count)
+
+        context['percent_complete'] = percent_complete
+        # context['closed_items_total'] = closed_items_total
+        # context['total_items'] = total_count
 
         # set backlog_flag true if backlog is in the title of the release
         title = context['release'].title
@@ -287,13 +315,13 @@ class ReleaseDetail(DetailView):
         return context
 
 
-class ReleaseQuickAdd(DetailView):
+class ReleaseBacklogAdd(DetailView):
 
     model = Release
-    template_name = 'release_quick.html'
+    template_name = 'release_backlog.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ReleaseQuickAdd, self).get_context_data(**kwargs)
+        context = super(ReleaseBacklogAdd, self).get_context_data(**kwargs)
         project_id = self.kwargs.get('project_id')
         release_id = self.kwargs.get('pk')
         context['project_id'] = project_id
@@ -317,14 +345,69 @@ class ReleaseQuickAdd(DetailView):
         context['backlog_id'] = backlog_id
 
         # pull "left" - the backlog data
-        left = Item.objects.filter(release__title__contains='Backlog', release__project__id=project_id)
+        left = Item.objects.filter(release__title__contains='Backlog', release__project__id=project_id).order_by('-priority')
         context['left'] = left
 
         # pull "right" - the current projects items
-        right = Item.objects.filter(release_id=context['release'].id)
+        right = Item.objects.filter(release_id=context['release'].id).order_by('-priority')
         context['right'] = right
 
         return context
+
+
+class ReleaseQuickAdd(CreateView):
+
+    form_class = forms.ReleaseQuickForm
+    template_name = 'release_quick.html'
+    # success_url = '/projects/'
+
+    def get_context_data(self, **kwargs):
+        context = super(ReleaseQuickAdd, self).get_context_data(**kwargs)
+        project_id = self.kwargs.get('project_id')
+        release_id = self.kwargs.get('pk')
+
+        release = Release.objects.get(pk=release_id)
+
+        context['project_id'] = project_id
+        context['release_id'] = release_id
+        context['release'] = release
+
+        self.success_url = '/projects/{{project_id}}/releases/{{release_id}}'.replace('{{project_id}}', project_id).replace('{{release_id}}', release_id)
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+
+        project_id = self.kwargs.get('project_id')
+        release_id = self.kwargs.get('pk')
+
+        # get field value
+        quick_items = self.request.POST['quick_items']
+
+        for line in iter(quick_items.splitlines()):
+            value_result = ''
+            if "," in line:
+                values = line.split(',')
+                for value in values[1:]:
+                    value_result += value + ','
+            else:
+                values[0] = line
+
+            value_result = value_result[0:-1]
+
+            new_item = Item.objects.create(
+                release_id=release_id,
+                title=values[0],
+                detail=value_result,
+                date_started=None,
+                date_completed=None,
+            )
+            new_item.save()
+
+        self.success_url = '/projects/' + project_id + '/releases/' + release_id
+
+        # parse field value creating an item for each (may not have a description, may only be a title
+        return HttpResponseRedirect(self.success_url)
 
 
 class ReleaseCreate(CreateView):
@@ -412,8 +495,14 @@ class ItemDetail(DetailView):
         context = super(ItemDetail, self).get_context_data(**kwargs)
         project_id = self.kwargs.get('project_id')
         release_id = self.kwargs.get('release_id')
+        item_id = self.kwargs.get('pk')
         context['project_id'] = project_id
         context['release_id'] = release_id
+
+        comments = ItemComments.objects.filter(item_id=item_id)
+
+        context['comments'] = comments
+
         return context
 
 
@@ -581,7 +670,48 @@ def item_complete_no_action(request, item_id, action=False):
     return item_complete_action(request, item_id, action)
 
 
+def item_add_comment(request, item_id):
+
+    # add comment
+
+    # raise DebugMessage(request.POST)
+
+    comment_text = request.POST['comment_text']
+    new_comment = ItemComments(item_id=item_id, comment=comment_text)
+    new_comment.save()
+
+    # templates for return value
+    comments_template = '''
+    <div class="panel-heading font-size-18">Comments</div>
+        {{comments}}
+    <div class="list-group-item">
+        <textarea id="comment_text" class="textarea-full-width" rows="6"></textarea><br><br>
+        <button class="btn btn-success margin-btm-5" onclick="trigger_add_comment('{{item_id}}')">Add Comment</button>
+    </div>
+    '''
+    comments_template = comments_template.replace('{{item_id}}', item_id)
+    comment_template = '''
+        <div class="list-group-item">
+            <span class="subtitle">{{comment_time}}</span><br>
+            {{comment}}
+        </div>
+    '''
+
+    # build return value
+    comments = ItemComments.objects.filter(item_id=item_id)
+    comments_return = ''
+    for row in comments:
+        comment_tmp = comment_template.replace('{{comment}}', row.comment)
+        comment_tmp = comment_tmp.replace('{{comment_time}}', get_formatted_date_time(row.date_created))
+        comments_return += comment_tmp
+
+    return_val = comments_template.replace('{{comments}}', comments_return)
+
+    return HttpResponse(content=return_val)
+
+
 # details
+
 
 def check_project_reporting(project_id):
 
@@ -600,7 +730,7 @@ def check_project_reporting(project_id):
             # no data for this day, generate data for the day
             ed = d + timedelta(days=1)
 
-            total_items = Item.objects.filter(release__project__id=project_id).count()
+            # total_items = Item.objects.filter(release__project__id=project_id).count()
             total_open_query = 'SELECT project_id_id as id, count(*) as total FROM projects_item as i ' \
                                'INNER JOIN projects_release as r ON r.id = i.release_id_id ' \
                                'WHERE project_id_id = "{project_id}" and i.date_created < "{ED}" and (i.date_completed > "{D}" or i.date_completed is null)'
@@ -638,3 +768,19 @@ def check_project_reporting(project_id):
         raise DebugMessage('1')
     '''
 
+def get_formatted_date_time(d):
+
+    day = d.strftime('%d')
+    if day[0] == '0':
+        day = day[1:]
+
+    hour = d.strftime('%I')
+    if hour[0] == '0':
+        hour = hour[1:]
+
+    return_val = d.strftime('%b DAY, %Y, HOUR:%M%p')
+    return_val = return_val.replace('DAY', day)
+    return_val = return_val.replace('HOUR', hour)
+    return_val = return_val.replace('AM', ' a.m.').replace('PM', ' p.m.')
+
+    return return_val

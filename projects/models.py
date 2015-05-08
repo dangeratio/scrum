@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 #
 class Project(models.Model):
 
-    title = models.CharField(max_length=200)
-    detail = models.TextField(max_length=2000)
+    title = models.CharField(max_length=200, )
+    detail = models.TextField(max_length=2000, )
     key = models.CharField(max_length=10, default='')
 
     def __str__(self):
@@ -25,9 +25,9 @@ class Release(models.Model):
     STATUS_CHOICES = ((NEW, 'New'), (OPEN, 'Open'), (IN_PROGRESS, 'In Progress'), (RESOLVED, 'Resolved'), (CLOSED, 'Closed'), )
 
     project_id = models.ForeignKey(Project, name='project', db_column='project_id_id', default=0, )
-    title = models.CharField(max_length=200)
-    detail = models.TextField(max_length=2000)
-    number = models.FloatField(default=0.0)
+    title = models.CharField(max_length=200, )
+    detail = models.TextField(max_length=2000, )
+    number = models.FloatField(default=0.0, )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=NEW, )
     # is_backlog = models.BooleanField(default=False, )
 
@@ -71,14 +71,14 @@ class Item(models.Model):
 
     release_id = models.ForeignKey(Release, name='release', db_column='release_id_id', default=0, )
     title = models.CharField(max_length=200)
-    detail = models.TextField(max_length=2000)
+    detail = models.TextField(max_length=2000, )
     priority = models.IntegerField(name='priority', db_column='priority', choices=PRIORITY_CHOICES, default=MED, )
     status = models.IntegerField(name='status', db_column='status', choices=STATUS_CHOICES, default=NEW, )
 
     date_created = models.DateTimeField(name='date_created', db_column='date_created', auto_now_add=True, )
     date_modified = models.DateTimeField(name='date_modified', db_column='date_modified', auto_now=True, )
-    date_started = models.DateTimeField(name='date_started', db_column='date_started', blank=True, null=True, default='2015-01-01 00:00', )
-    date_completed = models.DateTimeField(name='date_completed', db_column='date_completed', blank=True, null=True, default='2015-01-01 00:00', )
+    date_started = models.DateTimeField(name='date_started', db_column='date_started', blank=True, null=True, )
+    date_completed = models.DateTimeField(name='date_completed', db_column='date_completed', blank=True, null=True, )
 
     def __str__(self):
         return self.title
@@ -92,8 +92,8 @@ class Item(models.Model):
 class Task(models.Model):
 
     item_id = models.ForeignKey(Item, name='item', db_column='item_id_id', default=0, )
-    title = models.CharField(max_length=200)
-    detail = models.TextField(max_length=2000)
+    title = models.CharField(max_length=200, )
+    detail = models.TextField(max_length=2000, )
 
     def __str__(self):
         return self.title
@@ -110,4 +110,15 @@ class ItemLog(models.Model):
     day = models.DateField()
     total_open = models.IntegerField()
     total_closed = models.IntegerField()
+
+
+# this model is used to store a history log of comments on an item
+#
+class ItemComments(models.Model):
+
+    item_id = models.ForeignKey(Item, name='item', db_column='item_id', default=0, )
+    date_created = models.DateTimeField(name='date_created', db_column='date_created', auto_now_add=True, )
+    comment = models.TextField(max_length=2000, )
+
+
 

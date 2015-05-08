@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% load tags %}
+
+{% block pagetitle %}scrum - release view{% endblock %}
+{% block title %}release view{% endblock %}
+
+{% block head %}
+<!-- <script type="text/javascript" src="/static/js/jquery.ajax.min.js"></script> -->
+{% endblock %}
+
+{% block left %}
+
+<div class="btn-group-vertical fill-h padding-bottom-20" role="group">
+    <a class="btn btn-lg btn-warning" href="/projects/{{ project_id }}/releases/{{ release.id }}">Back <i class="fa fa-arrow-left"></i></a>
+</div>
+
+{% endblock %}
+
+{% block right %}
+
+<div class="panel panel-primary fill-h">
+    <div class="list-group-item">Created:<br> {{ release.date_created }}</div>
+    <div class="list-group-item">Modified:<br> {{ release.date_modified }}</div>
+    <div class="list-group-item">Start:<br> {{ release.date_start }}</div>
+    <div class="list-group-item">Complete:<br> {{ release.date_complete }}</div>
+    <div class="list-group-item">Percent Done:<br> {{ release.percent_done }}</div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="panel panel-primary">
+    <div class="panel-heading font-size-18">{{ release.title }}</div>
+    <div class="panel-body"><u>Number</u><br>{{ release.number }}</div>
+    <div class="panel-body"><u>Status</u><br>{{ release.status }}</div>
+    <div class="panel-body p-no-margin"><u>Detail</u><br>{{ release.detail|safe|linebreaks }}</div>
+</div>
+
+<table class="full drag-container">
+    <tr><td class="left">
+
+        <div class="panel panel-info">
+            <div class="panel-heading">Backlog Items</div>
+            <div class="panel-body container backlog_items" id="release{{backlog_id}}">
+
+                {% for left_item in left %}
+                    <div id="item{{left_item.id}}" class="panel panel-{{left_item.priority|priority_css}}">
+                        <div class="panel-header">{{ left_item.title }}</div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+
+    </td>
+    <td class="spacer"></td>
+    <td class="right">
+
+        <div class="panel panel-info">
+            <div class="panel-heading">{{release.title}} Items</div>
+            <div class="panel-body container release_items" id="release{{release.id}}">
+
+                {% for right_item in right %}
+                    <div id="item{{right_item.id}}" class="panel panel-{{right_item.priority|priority_css}}">
+                        <div class="panel-heading">{{ right_item.title }}</div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </td></tr>
+</table>
+
+
+<script type="text/javascript" src="/static/js/dragula.min.js"></script>
+
+<script type="text/javascript">
+var csrf_token = "{{ csrf_token }}";
+var release_items = document.getElementById("release{{release.id}}")
+var backlog_items = document.getElementById("release{{backlog_id}}")
+</script>
+
+<script type="text/javascript" src="/static/js/release_quick.js"></script>
+
+
+{% endblock %}
+
+{% block status %}
+<div id='status_field' class="status status-overlay"></div>
+{% endblock %}

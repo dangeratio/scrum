@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     url(r'^(?P<project_id>\d+)/releases/create/$', ReleaseCreate.as_view()),
     url(r'^(?P<project_id>\d+)/releases/edit/(?P<pk>\d+)$', ReleaseUpdate.as_view()),
     url(r'^(?P<project_id>\d+)/releases/quick/(?P<pk>\d+)$', ReleaseQuickAdd.as_view()),
+    url(r'^(?P<project_id>\d+)/releases/backlog/(?P<pk>\d+)$', ReleaseBacklogAdd.as_view()),
     url(r'^(?P<project_id>\d+)/releases/delete/(?P<pk>\d+)$', ReleaseDelete.as_view()),
 
     # items

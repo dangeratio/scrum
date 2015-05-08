@@ -15,8 +15,12 @@
 
 {% block right %}
 <div class="panel panel-primary fill-h">
-    <div class="list-group-item">Created:<br> {{ item.date_created }}</div>
-    <div class="list-group-item">Modified:<br> {{ item.date_modified }}</div>
+    {% if item.date_created %}
+        <div class="list-group-item">Created:<br> {{ item.date_created }}</div>
+    {% endif %}
+    {% if item.date_modified %}
+        <div class="list-group-item">Modified:<br> {{ item.date_modified }}</div>
+    {% endif %}
     <div class="list-group-item" id="date_started">
         Start:<br>
         {% if not item.date_started %}
@@ -43,14 +47,48 @@
 
 <div class="panel panel-primary fill-h">
     <div class="panel-heading font-size-18">{{ item.title }}</div>
+    {% if item.detail %}
     <div class="list-group-item"><div class="p-no-margin"><u>Detail</u><br>{{ item.detail|linebreaks }}</div></div>
+    {% endif %}
+    {% if item.type %}
     <div class="list-group-item"><u>Type</u><br> {{ item.type }}</div>
+    {% endif %}
+    {% if item.priority %}
     <div class="list-group-item"><u>Priority</u><br> {{ item.priority|show_priority }}</div>
+    {% endif %}
+    {% if item.effort %}
     <div class="list-group-item"><u>Effort</u><br> {{ item.effort }}</div>
+    {% endif %}
+    {% if item.release %}
     <div class="list-group-item"><u>Release</u><br> {{ item.release }}</div>
+    {% endif %}
+    {% if item.status %}
     <div class="list-group-item"><u>Status</u><br> {{ item.status|status }}</div>
-    <!--<div class="list-group-item"><u>Project</u><br> {{ item.type }}</div>-->
+    {% endif %}
+    {% if item.owner %}
     <div class="list-group-item"><u>Owner</u><br> {{ item.owner }}</div>
+    {% endif %}
+
+</div>
+
+<div class="panel panel-default fill-h" id="comments_panel">
+    <div class="panel-heading font-size-18">Comments</div>
+    {% if comments %}
+        {% for row in comments %}
+        <div class="list-group-item">
+            <span class="subtitle">{{row.date_created|format_date_time}}</span><br>
+            {{row.comment}}
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="list-group-item">
+            No comments
+        </div>
+    {% endif %}
+    <div class="list-group-item">
+        <textarea id="comment_text" class="textarea-full-width" rows="6"></textarea><br><br>
+        <button class="btn btn-success margin-btm-5" onclick="trigger_add_comment('{{item.id}}')">Add Comment</button>
+    </div>
 </div>
 
 <script type="text/javascript">

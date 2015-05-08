@@ -24,6 +24,13 @@ $(document).ready(function() {
         <input type='button' onclick='javascript:id_number_increase()' value='+' /> \
         ");
 
+    if ( $('#id_date_started').val() == '2015-01-01 00:00' ) {
+        $('#id_date_started').val('');
+    }
+    if ( $('#id_date_completed').val() == '2015-01-01 00:00' ) {
+        $('#id_date_completed').val('');
+    }
+
 });
 
 

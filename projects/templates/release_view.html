@@ -10,8 +10,9 @@
 <div class="btn-group-vertical fill-h padding-bottom-20" role="group">
     <a class="btn btn-lg btn-warning" href="/projects/{{ project_id }}">Back <i class="fa fa-arrow-left"></i></a>
     {% if backlog_flag = False %}
-    <a class="btn btn-lg btn-success" href="/projects/{{ project_id }}/releases/quick/{{ release.id }}">Add from Backlog</a>
+    <a class="btn btn-lg btn-success" href="/projects/{{ project_id }}/releases/backlog/{{ release.id }}">Add from Backlog</a>
     {% endif %}
+    <a class="btn btn-lg btn-success" href="/projects/{{ project_id }}/releases/quick/{{ release.id }}">Quick Add Items <i class="fa fa-file-text-o"></i></a>
     <a class="btn btn-lg btn-success" href="/projects/{{ project_id }}/releases/{{ release.id }}/items/create">New Item <i class="fa fa-file-text-o"></i></a>
     <a class="btn btn-lg btn-default" href="/projects/{{ project_id }}/releases/edit/{{ release.id }}">Edit Release</a>
     <a class="btn btn-lg btn-danger" href="/projects/{{ project_id }}/releases/delete/{{ release.id }}">Delete Release <i class="fa fa-trash-o"></i></a>
@@ -26,8 +27,22 @@
     <div class="list-group-item">Modified:<br> {{ release.date_modified }}</div>
     <!-- <div class="list-group-item">Start:<br> {{ release.date_start }}</div> -->
     <!-- <div class="list-group-item">Complete:<br> {{ release.date_complete }}</div> -->
-    <div class="list-group-item">Percent Complete:<br> {{ percent_complete|percent }}</div>
+    <div class="list-group-item">Percent Complete:<br>
+        {{ percent_complete|percent }}
+    </div>
 </div>
+
+
+<div class="panel panel-primary fill-h">
+    <div class="panel-heading">Legend</div>
+    <div class="list-group-item">
+        <div class="panel panel-danger fill-h"><div class="panel-heading">Priority High</div></div>
+        <div class="panel panel-warning fill-h"><div class="panel-heading">Priority Medium</div></div>
+        <div class="panel panel-success fill-h"><div class="panel-heading">Priority Low</div></div>
+        <div class="panel panel-default fill-h"><div class="panel-heading">Status Closed</div></div>
+    </div>
+</div>
+
 
 {% endblock %}
 
@@ -48,7 +63,9 @@
     <tr><td class="left">
         <div class="panel panel-{{ item.priority|priority_css }}">
             <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project_id }}/releases/{{ release.id }}/items/{{ item.id }}">{{ item.title }}</a>
-            <div class="panel-body p-no-margin"><u>Detail</u>{{ item.detail|safe|linebreaks }}</div>
+            {% if item.detail|trim_whitespace != '' %}
+            <div class="panel-body p-no-margin">{{ item.detail|safe|linebreaks }}</div>
+            {% endif %}
         </div>
     </td>
     {% set flag = 0 %}
@@ -56,7 +73,9 @@
     <td class="spacer"></td><td class="right">
         <div class="panel panel-{{ item.priority|priority_css }}">
             <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project_id }}/releases/{{ release.id }}/items/{{ item.id }}">{{ item.title }}</a>
-            <div class="panel-body p-no-margin"><u>Detail</u>{{ item.detail|safe|linebreaks }}</div>
+            {% if item.detail|trim_whitespace != '' %}
+            <div class="panel-body p-no-margin">{{ item.detail|safe|linebreaks }}</div>
+            {% endif %}
         </div>
     </td></tr>
     {% set flag = 1 %}
@@ -70,7 +89,9 @@
     <tr><td class="left">
         <div class="panel panel-default">
             <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project_id }}/releases/{{ release.id }}/items/{{ item.id }}">{{ item.title }}</a>
-            <div class="panel-body p-no-margin"><u>Detail</u>{{ item.detail|safe|linebreaks }}</div>
+            {% if item.detail|trim_whitespace != '' %}
+            <div class="panel-body p-no-margin">{{ item.detail|safe|linebreaks }}</div>
+            {% endif %}
         </div>
     </td>
     {% set flag = 0 %}
@@ -78,7 +99,9 @@
     <td class="spacer"></td><td class="right">
         <div class="panel panel-default">
             <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project_id }}/releases/{{ release.id }}/items/{{ item.id }}">{{ item.title }}</a>
-            <div class="panel-body p-no-margin"><u>Detail</u>{{ item.detail|safe|linebreaks }}</div>
+            {% if item.detail|trim_whitespace != '' %}
+            <div class="panel-body p-no-margin">{{ item.detail|safe|linebreaks }}</div>
+            {% endif %}
         </div>
     </td></tr>
     {% set flag = 1 %}

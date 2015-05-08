@@ -34,6 +34,8 @@ class ProjectForm(forms.ModelForm):
 
 class ReleaseForm(forms.ModelForm):
 
+    detail = forms.CharField(required=False, widget=forms.Textarea, )
+
     class Meta:
         model = Release
 
@@ -43,15 +45,29 @@ class ReleaseForm(forms.ModelForm):
         data = self.cleaned_data['title']
 
         if "backlog" in data:
-            raise forms.ValidationError("You cannot have backlog in a release title.")
+            raise forms.ValidationError("You cannot have the word backlog in a release title.")
 
         # Always return the cleaned data, whether you have changed it or
         # not.
         return data
 
 
+class ReleaseQuickForm(forms.ModelForm):
+
+    model = Release
+    quick_entry = forms.CharField(label="Quick Entry", widget=forms.Textarea, )
+
+    class Meta:
+        model = Item
+        fields = (
+            'quick_entry',
+        )
+
+
 
 class ItemForm(forms.ModelForm):
+
+    detail = forms.CharField(required=False, widget=forms.Textarea, )
 
     class Meta:
         model = Item
@@ -60,6 +76,8 @@ class ItemForm(forms.ModelForm):
 
         exclude = (
             'key',
+            'date_started',
+            'date_completed',
         )
 
         '''

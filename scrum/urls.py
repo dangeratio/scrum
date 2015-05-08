@@ -5,9 +5,6 @@ import projects.urls
 
 
 urlpatterns = [
-    # Examples:
-    # url(r'^$', 'scrum.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^projects/', include(projects.urls)),
@@ -20,6 +17,6 @@ urlpatterns = [
     url(r'^ajax/item_start/(?P<item_id>\d+)$', 'projects.views.item_start'),
     url(r'^ajax/item_complete_action/(?P<item_id>\d+)$', 'projects.views.item_complete_action'),
     url(r'^ajax/item_complete_no_action/(?P<item_id>\d+)$', 'projects.views.item_complete_no_action'),
-
+    url(r'^ajax/item_add_comment/(?P<item_id>\d+)$', 'projects.views.item_add_comment'),
 
 ]
