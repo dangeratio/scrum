@@ -18,5 +18,6 @@ urlpatterns = [
     url(r'^ajax/item_complete_action/(?P<item_id>\d+)$', 'projects.views.item_complete_action'),
     url(r'^ajax/item_complete_no_action/(?P<item_id>\d+)$', 'projects.views.item_complete_no_action'),
     url(r'^ajax/item_add_comment/(?P<item_id>\d+)$', 'projects.views.item_add_comment'),
+    url(r'^ajax/get_chart/(?P<project_id>\d+)/(?P<chart_id>\S+)$', 'projects.views.get_chart'),
 
 ]

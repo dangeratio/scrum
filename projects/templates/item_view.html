@@ -24,7 +24,7 @@
     <div class="list-group-item" id="date_started">
         Start:<br>
         {% if not item.date_started %}
-            <button class="fa fa-play full-width btn btn-primary btn-sm margin-btm-5" onclick="trigger_start('{{item.id}}');">Start Item</button>
+            <button class="full-width btn btn-primary btn-sm margin-btm-5" onclick="trigger_start('{{item.id}}');">Start Item <i class="fa fa-play"></i></button>
         {% else %}
             {{ item.date_started }}
         {% endif %}
@@ -33,8 +33,8 @@
     <div class="list-group-item" id="date_completed">
         Completed:<br>
         {% if not item.date_completed %}
-            <button class="fa fa-check-square-o full-width btn btn-primary btn-sm margin-btm-5" onclick="trigger_complete_action('{{item.id}}')">Complete, With Action</button>
-            <button class="fa fa-check-square-o full-width btn btn-primary btn-sm margin-btm-5" onclick="trigger_complete_no_action('{{item.id}}')">Complete, No Action</button>
+            <button class="full-width btn btn-primary btn-sm margin-btm-5" onclick="trigger_complete_action('{{item.id}}')">Complete, With Action <i class="fa fa-check-square-o"></i></button>
+            <button class="full-width btn btn-primary btn-sm margin-btm-5" onclick="trigger_complete_no_action('{{item.id}}')">Complete, No Action <i class="fa fa-check-square-o"></i></button>
         {% else %}
             {{ item.date_completed }}
         {% endif %}

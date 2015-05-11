@@ -1,7 +1,6 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, ModelFormMixin, DeleteView
-from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect
 from datetime import datetime, timedelta
 
@@ -65,12 +64,33 @@ class ProjectDetail(DetailView):
     slug_field = 'project_id'
 
     def get_context_data(self, **kwargs):
+
         context = super(ProjectDetail, self).get_context_data(**kwargs)
         project_id = self.kwargs['pk']
 
-        # provide release objects for the list of releases below the project details
-        releases = Release.objects.filter(project=project_id).annotate(num_items=Count('item')).order_by('number')
-        context['releases'] = releases
+        releases = Release.objects.filter(project_id=project_id)    # .order_by('-id' )
+        releases_return = []
+
+        for release in releases:
+
+            closed_items = Item.objects.filter(release_id=release.id)
+            closed_items = closed_items.exclude(status=0)
+            closed_items = closed_items.exclude(status=1)
+            closed_items = closed_items.exclude(status=2)
+            closed_items = closed_items.exclude(status=3)
+
+            open_items = Item.objects.filter(release_id=release.id)
+            open_items = open_items.exclude(status=4)
+            open_items = open_items.exclude(status=5)
+
+            release_return = release
+
+            release_return.closed_items = closed_items.count()
+            release_return.open_items = open_items.count()
+
+            releases_return.append(release_return)
+
+        context['releases'] = releases_return
 
         # provide total project items for charting
         project_total_items = Item.objects.filter(release__project__id=project_id).count()
@@ -80,12 +100,50 @@ class ProjectDetail(DetailView):
         check_project_reporting(project_id)
 
         # get data for chart
-        item_logs_query = 'SELECT * FROM (SELECT * FROM projects_itemlog WHERE project_id_id = "{project_id}" ORDER BY day DESC LIMIT {days}) ORDER BY day ASC'
-        item_logs_query = item_logs_query.replace("{project_id}", project_id)
-        item_logs_query = item_logs_query.replace("{days}", str(number_of_days_to_chart))
-        item_logs = ItemLog.objects.raw(item_logs_query)
+        item_logs = get_item_logs(project_id)
         # ************************************************** need to add an order_by and limit the results to the last N
 
+        if 'project_tab' in self.request.session:
+            project_tab = self.request.session['project_tab']
+            if project_tab == 'burn_down':
+                raise DebugMessage('burn_down')
+                # draw_burn_down_chart()
+                pass
+            else:   # project_tab == 'item_completion'
+                '''
+                returned_data = draw_item_completion_chart(project_id, item_logs)
+
+                context['open_issues_data'] = returned_data['open_issues_data']
+                context['closed_issues_data'] = returned_data['closed_issues_data']
+                context['date_data'] = returned_data['date_data']
+                '''
+
+                data = draw_item_completion_chart(project_id, item_logs)
+                data['project_id'] = project_id
+                context['chart'] = get_ajax_chart('item_completion', data)
+
+        else:
+            # default tab
+
+            self.request.session['project_tab'] = 'item_completion'
+
+            returned_data = draw_item_completion_chart(project_id, item_logs)
+
+            context['open_issues_data'] = returned_data['open_issues_data']
+            context['closed_issues_data'] = returned_data['closed_issues_data']
+            context['date_data'] = returned_data['date_data']
+
+        return context
+
+
+def get_item_logs(project_id):
+    item_logs_query = 'SELECT * FROM (SELECT * FROM projects_itemlog WHERE project_id_id = "{project_id}" ORDER BY day DESC LIMIT {days}) ORDER BY day ASC'
+    item_logs_query = item_logs_query.replace("{project_id}", project_id)
+    item_logs_query = item_logs_query.replace("{days}", str(number_of_days_to_chart))
+    return ItemLog.objects.raw(item_logs_query)
+
+
+def draw_item_completion_chart(project_id, item_logs):
         # build data set for the main chart
         open_issues_data = ''
         closed_issues_data = ''
@@ -100,28 +158,23 @@ class ProjectDetail(DetailView):
                            'WHERE project_id_id = "{project_id}" and i.status != 4 and i.status != 5 '
         today_open_query = today_open_query.replace("{project_id}", project_id)
         today_open = Item.objects.raw(today_open_query)[0]
-        # today_open.total
 
         today_closed_query = 'SELECT project_id_id as id, count(*) as total FROM projects_item as i ' \
                              'INNER JOIN projects_release as r ON r.id = i.release_id_id ' \
                              'WHERE project_id_id = "{project_id}" and (i.status = 4 or i.status = 5) '
         today_closed_query = today_closed_query.replace("{project_id}", project_id)
         today_closed = Item.objects.raw(today_closed_query)[0]
-        # today_closed.total
 
         open_issues_data += str(today_open.total)
         closed_issues_data += str(today_closed.total)
         date_data += "'" + datetime.now().strftime("%Y-%m-%d") + "'"
 
-        # remove trailing comma
-        # open_issues_data = open_issues_data[:-1]
-        # closed_issues_data = closed_issues_data[:-1]
+        return_val = {}
+        return_val['open_issues_data'] = open_issues_data
+        return_val['closed_issues_data'] = closed_issues_data
+        return_val['date_data'] = date_data
 
-        context['open_issues_data'] = open_issues_data
-        context['closed_issues_data'] = closed_issues_data
-        context['date_data'] = date_data
-
-        return context
+        return return_val
 
 
 class ProjectCreate(CreateView):
@@ -758,15 +811,6 @@ def check_project_reporting(project_id):
 
             new_log_entry.save()
 
-    '''
-    last_day_query = 'select id, max(day) as max_date from projects_itemlog where project_id_id = ' + project_id
-    last_day = Project.objects.raw(last_day_query)
-
-    if last_day == None:
-        raise DebugMessage(None)
-    else:
-        raise DebugMessage('1')
-    '''
 
 def get_formatted_date_time(d):
 
@@ -784,3 +828,158 @@ def get_formatted_date_time(d):
     return_val = return_val.replace('AM', ' a.m.').replace('PM', ' p.m.')
 
     return return_val
+
+
+def get_chart(request, project_id, chart_id):
+
+    data = {}
+    data['project_id'] = project_id
+    return_val = get_ajax_chart(chart_id, data)
+    return HttpResponse(content=return_val)
+
+
+# get_ajax_chart('item_completion', data)
+#
+def get_ajax_chart(chart, data):
+
+    if chart == 'item_completion':
+
+        template = '''
+        <div id="chart" class="chart"></div>
+        <script type="text/javascript">
+            $(function () {
+                $('#chart').highcharts({
+                    chart: {
+                        type: 'area',
+                        showAxes: false,
+                    },
+                    title: { text: '' },
+                    plotOptions: {
+                        area: {
+                            stacking: 'normal',
+                            lineColor: '#fff',
+                            lineWidth: 0,
+                            marker: { enabled: false, },
+                            dataLabels: { enabled: false, },
+                        }
+                    },
+                    yAxis: {
+                        title: { text: '' },
+                        labels: { enabled: false, },
+                        gridLineWidth: 0,
+                    },
+                    xAxis: {
+                        title: { text: '' },
+                        labels: { enabled: true, },
+                        tickColor: '#fff',
+                        categories: [{{date_data}}],
+                    },
+                    series: [{
+                        name: 'Pending Issues',
+                        data: [{{open_issues_data}}],
+                        color: '#E75F54',
+                        showInLegend: false,
+                    }, {
+                        name: 'Fixed Issues',
+                        data: [{{closed_issues_data}}],
+                        color: '#336C48',
+                        showInLegend: false,
+                    }]
+                });
+            });
+        </script>
+        '''
+
+        returned_data = draw_item_completion_chart(data['project_id'], get_item_logs(data['project_id']))
+
+        template = template.replace('{{open_issues_data}}', returned_data['open_issues_data'])
+        template = template.replace('{{closed_issues_data}}', returned_data['closed_issues_data'])
+        template = template.replace('{{date_data}}', returned_data['date_data'])
+
+        return template
+
+    elif chart == 'burndown':
+
+        template = '''
+        <div id="chart" class="chart"></div>
+        <script type="text/javascript">
+            $(function () {
+                $('#chart').highcharts({
+                    chart: {
+                        type: 'area',
+                        showAxes: false,
+                    },
+                    title: { text: '' },
+                    plotOptions: {
+                        area: {
+                            stacking: 'normal',
+                            lineColor: '#fff',
+                            lineWidth: 0,
+                            marker: { enabled: false, },
+                            dataLabels: { enabled: false, },
+                        }
+                    },
+                    yAxis: {
+                        title: { text: '' },
+                        labels: { enabled: false, },
+                        gridLineWidth: 0,
+                    },
+                    xAxis: {
+                        title: { text: '' },
+                        labels: { enabled: true, },
+                        tickColor: '#fff',
+                        categories: [{{date_data|safe}}],
+                    },
+                    series: [{
+                        name: 'Pending Issues',
+                        // data: [0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987],
+                        data: [{{open_issues_data}}],
+                        color: '#E75F54',
+                        showInLegend: false,
+                    }, {
+                        name: 'Fixed Issues',
+                        // data: [0,0,0,1,1,2,3,5,8,13,21,34,55,89,144,233,377],
+                        data: [{{closed_issues_data}}],
+                        color: '#336C48',
+                        showInLegend: false,
+                    }]
+                });
+            });
+        </script>
+        '''
+
+        return '<b>[burndown chart here]</b>'
+
+
+    return '<b>Nothing yet, may have new charts coming later.</b>'
+
+
+def item_complete_action(request, item_id, action=True):
+
+    # perform update
+    curr_item = Item.objects.get(id=item_id)
+    d = datetime.now()
+    curr_item.date_completed = d
+    if action:
+        curr_item.status = Item.CLOSED_ACTION
+    else:
+        curr_item.status = Item.CLOSED_NO_ACTION
+    curr_item.status
+    curr_item.save()
+
+    # item_title = curr_item.title
+    day = d.strftime('%d')
+    if day[0] == '0':
+        day = day[1:]
+
+    hour = d.strftime('%I')
+    if hour[0] == '0':
+        hour = hour[1:]
+
+    date_completed = d.strftime('%b DAY, %Y, HOUR:%M%p')
+    date_completed = date_completed.replace('DAY', day)
+    date_completed = date_completed.replace('HOUR', hour)
+    return_val = date_completed.replace('AM', ' a.m.').replace('PM', ' p.m.')
+
+    return HttpResponse(content=return_val)
+

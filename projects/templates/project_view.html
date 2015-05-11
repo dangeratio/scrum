@@ -5,6 +5,10 @@
 
 {% block head %}
 <script src="/static/js/highcharts.js"></script>
+<script src="/static/js/project_view.js"></script>
+<script type='text/javascript'>
+    project_id = {{project.id}};
+</script>
 {% endblock %}
 
 {% block left %}
@@ -22,51 +26,63 @@
 <!--<div class="list-group">-->
     <div class="panel-heading font-size-18">{{ project.title }} [{{ project.key }}]</div>
     <div class="panel-body p-no-margin"><u>Detail</u>{{ project.detail|safe|linebreaks }}</div>
-    <div id="burndown_chart" class="burndown_chart"></div>
-    <script type="text/javascript">
-        $(function () {
-            $('#burndown_chart').highcharts({
-                chart: {
-                    type: 'area',
-                    showAxes: false,
-                },
-                title: { text: '' },
-                plotOptions: {
-                    area: {
-                        stacking: 'normal',
-                        lineColor: '#fff',
-                        lineWidth: 0,
-                        marker: { enabled: false, },
-                        dataLabels: { enabled: false, },
-                    }
-                },
-                yAxis: {
+
+    <ul class="nav nav-tabs main_nav">
+        <li id="ic" role="presentation" class="active"><a href="#" onclick="trigger_tab('ic');">Item Completion</a></li>
+        <li id="bd" role="presentation"><a href="#" onclick="trigger_tab('bd');">Burn Down Chart</a></li>
+        <li id="..." role="presentation"><a href="#" onclick="trigger_tab('...');">...</a></li>
+    </ul>
+
+    <div id="chart_container">
+        {{chart|safe}}
+        <!--
+        <div id="chart" class="chart"></div>
+        <script type="text/javascript">
+            $(function () {
+                $('#chart').highcharts({
+                    chart: {
+                        type: 'area',
+                        showAxes: false,
+                    },
                     title: { text: '' },
-                    labels: { enabled: false, },
-                    gridLineWidth: 0,
-                },
-                xAxis: {
-                    title: { text: '' },
-                    labels: { enabled: true, },
-                    tickColor: '#fff',
-                    categories: [{{date_data|safe}}],
-                },
-                series: [{
-                    name: 'Pending Issues',
-                    // data: [0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987],
-                    data: [{{open_issues_data}}],
-                    color: '#E75F54',
-                    showInLegend: false,
-                }, {
-                    name: 'Fixed Issues',
-                    // data: [0,0,0,1,1,2,3,5,8,13,21,34,55,89,144,233,377],
-                    data: [{{closed_issues_data}}],
-                    color: '#336C48',
-                    showInLegend: false,
-                }]
+                    plotOptions: {
+                        area: {
+                            stacking: 'normal',
+                            lineColor: '#fff',
+                            lineWidth: 0,
+                            marker: { enabled: false, },
+                            dataLabels: { enabled: false, },
+                        }
+                    },
+                    yAxis: {
+                        title: { text: '' },
+                        labels: { enabled: false, },
+                        gridLineWidth: 0,
+                    },
+                    xAxis: {
+                        title: { text: '' },
+                        labels: { enabled: true, },
+                        tickColor: '#fff',
+                        categories: [{{date_data|safe}}],
+                    },
+                    series: [{
+                        name: 'Pending Issues',
+                        // data: [0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987],
+                        data: [{{open_issues_data}}],
+                        color: '#E75F54',
+                        showInLegend: false,
+                    }, {
+                        name: 'Fixed Issues',
+                        // data: [0,0,0,1,1,2,3,5,8,13,21,34,55,89,144,233,377],
+                        data: [{{closed_issues_data}}],
+                        color: '#336C48',
+                        showInLegend: false,
+                    }]
+                });
             });
-        });
-    </script>
+        </script>
+        -->
+    </div>
 </div>
 
 <table border="0" cellpadding="0" cellspacing="0" class="release-details">
@@ -74,7 +90,8 @@
 <script type="text/javascript">
     $(function () {
         Highcharts.getOptions().plotOptions.pie.colors = (function () {
-            return ['#c0c0c0', '#393939'];
+            return ['#d1e9f5', '#c0c0c0', '#393939'];
+            // return ['#c0c0c0', '#000', '#393939'];
             // return ['#c0c0c0', '#f0f0f0'];
         }());
 
@@ -105,8 +122,9 @@
                 type: 'pie',
                 name: '',
                 data: [
-                    ['Release Items', {{release.num_items}}],
-                    ['Other Items', ({{project_total_items}} - {{release.num_items}})]
+                    ['Release - Open', {{release.open_items}}],
+                    ['Release - Closed', {{release.closed_items}}],
+                    ['Other Items', ({{project_total_items}} - {{release.open_items}} - {{release.closed_items}})]
                 ]
             }]
         });
@@ -114,17 +132,17 @@
 </script>
 <tr><td class="">
 <div class="panel panel-info">
-    <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project.id }}/releases/{{ release.id }}">
-        {{ release.title }} ({{ release.number }})
-        <span class="badge">Items: {{ release.num_items }}</span>
+    <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project.id }}/releases/{{release.id }}">
+        {{release.title}} ({{release.number}})
+        <span class="badge">Items: {{release.num_items}}</span>
     </a>
-    <div class="list-group-item p-no-margin">{{ release.detail|safe|linebreaks }}
+    <div class="list-group-item p-no-margin">{{release.detail|safe|linebreaks }}
     </div>
 
     <!--
-    <div class="list-group-item p-no-margin">project_id: {{ release.project_id }}</div>
-    <div class="list-group-item p-no-margin">project_id_id: {{ release.project_id_id }}</div>
-    <div class="list-group-item p-no-margin">id: {{ release.id }}</div>
+    <div class="list-group-item p-no-margin">project_id: {{release.project_id }}</div>
+    <div class="list-group-item p-no-margin">project_id_id: {{release.project_id_id }}</div>
+    <div class="list-group-item p-no-margin">id: {{release.id }}</div>
     //-->
 </div>
 </td><td class="chart">
@@ -132,5 +150,10 @@
 </td></tr>
 {% endfor %}
 </table>
+
+<script type="text/javascript">
+var csrf_token = "{{ csrf_token }}";
+</script>
+<script src="/static/js/item_view.js"></script>
 
 {% endblock %}
