@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-    var time_to_leave_status_messages = 30000
+    var time_to_leave_status_messages = 5000
 
     //$('#status_field').fadeOut('fast');
 
@@ -46,7 +46,7 @@ $(document).ready(function() {
                 }, 0);
                 // remove alert
                 setTimeout( function() {
-                    $('#' + new_el_id).hide();
+                    $('#' + new_el_id).fadeOut('slow');
                 }, time_to_leave_status_messages);
             },
             error: function(xhr, textStatus, errorThrown) {

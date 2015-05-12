@@ -10,7 +10,7 @@
 <div class="btn-group-vertical fill-h padding-bottom-20" role="group">
     <a class="btn btn-lg btn-warning" href="/projects/{{ project_id }}">Back <i class="fa fa-arrow-left"></i></a>
     {% if backlog_flag = False %}
-    <a class="btn btn-lg btn-success" href="/projects/{{ project_id }}/releases/backlog/{{ release.id }}">Add from Backlog</a>
+    <a class="btn btn-lg btn-success" href="/projects/{{ project_id }}/releases/backlog/{{ release.id }}">Backlog Items</a>
     {% endif %}
     <a class="btn btn-lg btn-success" href="/projects/{{ project_id }}/releases/quick/{{ release.id }}">Quick Add Items <i class="fa fa-file-text-o"></i></a>
     <a class="btn btn-lg btn-success" href="/projects/{{ project_id }}/releases/{{ release.id }}/items/create">New Item <i class="fa fa-file-text-o"></i></a>
@@ -36,10 +36,10 @@
 <div class="panel panel-primary fill-h">
     <div class="panel-heading">Legend</div>
     <div class="list-group-item">
-        <div class="panel panel-danger fill-h"><div class="panel-heading">Priority High</div></div>
+        <div class="panel panel-danger fill-h margin-top-7"><div class="panel-heading">Priority High</div></div>
         <div class="panel panel-warning fill-h"><div class="panel-heading">Priority Medium</div></div>
         <div class="panel panel-success fill-h"><div class="panel-heading">Priority Low</div></div>
-        <div class="panel panel-default fill-h"><div class="panel-heading">Status Closed</div></div>
+        <div class="panel panel-default fill-h margin-bottom-7"><div class="panel-heading">Status Closed</div></div>
     </div>
 </div>
 
@@ -55,8 +55,14 @@
     <div class="panel-body p-no-margin"><u>Detail</u><br>{{ release.detail|safe|linebreaks }}</div>
 </div>
 
-{% set flag = 1 %}
+
 <table class="release_items">
+<tr><td colspan="2">
+    <div id="open_items_title" class="white_title">
+        Open Items
+    </div>
+</td></tr>
+{% set flag = 1 %}
 {% for item in open_items %}
 
     {% if flag = 1 %}
@@ -82,6 +88,13 @@
     {% endif %}
 
 {% endfor %}
+
+
+<tr><td colspan="2">
+    <div id="closed_items_title" class="white_title">
+        Closed Items
+    </div>
+</td></tr>
 
 {% for item in closed_items %}
 

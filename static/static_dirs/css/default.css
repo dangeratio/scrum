@@ -183,6 +183,13 @@ td.left, td.right {
     vertical-align: top;
 }
 
+div.white_title {
+    font-size: 18px;
+    color: #c0c0c0;
+    margin: 7px;
+    text-shadow: 0px 1px 1px #000;
+}
+
 /* release quick add styles */
 
 div.backlog_items, div.release_items {
@@ -365,4 +372,14 @@ div.chart {
 
 .align-fix {
     margin-top: 3px;
+}
+
+/* legend */
+
+.margin-bottom-7 {
+    margin-bottom: 7px;
+}
+
+.margin-top-7 {
+    margin-top: 7px;
 }

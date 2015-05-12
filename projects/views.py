@@ -68,7 +68,7 @@ class ProjectDetail(DetailView):
         context = super(ProjectDetail, self).get_context_data(**kwargs)
         project_id = self.kwargs['pk']
 
-        releases = Release.objects.filter(project_id=project_id)    # .order_by('-id' )
+        releases = Release.objects.filter(project_id=project_id).order_by('number')    # .order_by('-id')
         releases_return = []
 
         for release in releases:
@@ -87,6 +87,7 @@ class ProjectDetail(DetailView):
 
             release_return.closed_items = closed_items.count()
             release_return.open_items = open_items.count()
+            release_return.total_items = closed_items.count() + open_items.count()
 
             releases_return.append(release_return)
 
@@ -398,11 +399,19 @@ class ReleaseBacklogAdd(DetailView):
         context['backlog_id'] = backlog_id
 
         # pull "left" - the backlog data
-        left = Item.objects.filter(release__title__contains='Backlog', release__project__id=project_id).order_by('-priority')
+        # left = Item.objects.filter(release__title__contains='Backlog', release__project__id=project_id).order_by('-priority')
+        left = Item.objects.filter(release__title__contains='Backlog', release__project__id=project_id)
+        left = left.exclude(status=4)
+        left = left.exclude(status=5)
+        left = left.order_by('-priority')
         context['left'] = left
 
         # pull "right" - the current projects items
-        right = Item.objects.filter(release_id=context['release'].id).order_by('-priority')
+        # right = Item.objects.filter(release_id=context['release'].id).order_by('-priority')
+        right = Item.objects.filter(release_id=context['release'].id)
+        right = right.exclude(status=4)
+        right = right.exclude(status=5)
+        right = right.order_by('-priority')
         context['right'] = right
 
         return context
@@ -906,50 +915,59 @@ def get_ajax_chart(chart, data):
             $(function () {
                 $('#chart').highcharts({
                     chart: {
-                        type: 'area',
-                        showAxes: false,
+                        type: 'line',
+                        // showAxes: false,
                     },
                     title: { text: '' },
                     plotOptions: {
-                        area: {
-                            stacking: 'normal',
-                            lineColor: '#fff',
-                            lineWidth: 0,
-                            marker: { enabled: false, },
-                            dataLabels: { enabled: false, },
+                        line: {
+                            dataLabels: { enabled: false },
+                            enableMouseTracking: false,
                         }
                     },
                     yAxis: {
                         title: { text: '' },
                         labels: { enabled: false, },
+                        floor: 0,
                         gridLineWidth: 0,
                     },
                     xAxis: {
                         title: { text: '' },
                         labels: { enabled: true, },
                         tickColor: '#fff',
-                        categories: [{{date_data|safe}}],
+                        floor: 0,
+                        // categories: [{{date_data|safe}}],
                     },
                     series: [{
-                        name: 'Pending Issues',
-                        // data: [0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987],
-                        data: [{{open_issues_data}}],
-                        color: '#E75F54',
-                        showInLegend: false,
-                    }, {
-                        name: 'Fixed Issues',
-                        // data: [0,0,0,1,1,2,3,5,8,13,21,34,55,89,144,233,377],
-                        data: [{{closed_issues_data}}],
+                        name: 'Open Issues',
+                        data: [987, 610, 377, 233, 144, 89, 55, 34, 21, 13, 8, 5, 3, 2, 1, 1, 0],
+                        // data: [{{open_issues_data}}],
                         color: '#336C48',
                         showInLegend: false,
+                    }, {
+                        type: 'line',
+                        name: ' ',
+                        showInLegend: false,
+                        data: [[0, 987], [16, 0]],
+                        // data: [[{{trend_line_start}}], [{{trend_line_end}}]]
+                        marker: {
+                            enabled: false
+                        },
+                        states: {
+                            hover: {
+                                lineWidth: 0
+                            }
+                        },
+                        enableMouseTracking: false
                     }]
                 });
             });
         </script>
         '''
 
-        return '<b>[burndown chart here]</b>'
 
+        # return template
+        return '<b>[burndown chart here]</b>'
 
     return '<b>Nothing yet, may have new charts coming later.</b>'
 

@@ -134,7 +134,7 @@
 <div class="panel panel-info">
     <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project.id }}/releases/{{release.id }}">
         {{release.title}} ({{release.number}})
-        <span class="badge">Items: {{release.num_items}}</span>
+        <span class="badge">Items: {{release.total_items}}</span>
     </a>
     <div class="list-group-item p-no-margin">{{release.detail|safe|linebreaks }}
     </div>
