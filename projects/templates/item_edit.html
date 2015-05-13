@@ -26,7 +26,13 @@
     {% csrf_token %}
 
     <div class="panel panel-primary">
-        <div class="panel-heading font-size-18">Edit Item</div>
+        <div class="panel-heading font-size-18">
+            {% if item.id %}
+            Edit Item
+            {% else %}
+            Create Item
+            {% endif %}
+        </div>
         {% for field in form %}
         <div class="list-group-item">
             {% bootstrap_field field %}

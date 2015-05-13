@@ -57,11 +57,13 @@
 
 
 <table class="release_items">
+{% if open_items %}
 <tr><td colspan="2">
     <div id="open_items_title" class="white_title">
         Open Items
     </div>
 </td></tr>
+{% endif %}
 {% set flag = 1 %}
 {% for item in open_items %}
 
@@ -89,12 +91,13 @@
 
 {% endfor %}
 
-
+{% if closed_items %}
 <tr><td colspan="2">
     <div id="closed_items_title" class="white_title">
         Closed Items
     </div>
 </td></tr>
+{% endif %}
 
 {% for item in closed_items %}
 

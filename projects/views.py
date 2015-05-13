@@ -4,6 +4,13 @@ from django.views.generic.edit import CreateView, UpdateView, ModelFormMixin, De
 from django.http import HttpResponse, HttpResponseRedirect
 from datetime import datetime, timedelta
 
+# time stuff
+from django.utils.timezone import make_aware
+import pytz
+from pytz import timezone
+from django.conf import settings
+
+
 from projects.models import Project, Release, Item, ItemLog, ItemComments
 from projects import forms
 
@@ -735,11 +742,10 @@ def item_complete_no_action(request, item_id, action=False):
 def item_add_comment(request, item_id):
 
     # add comment
-
-    # raise DebugMessage(request.POST)
-
-    comment_text = request.POST['comment_text']
-    new_comment = ItemComments(item_id=item_id, comment=comment_text)
+    # comment_text = request.POST['comment_text']
+    comment_text = 'asdf'
+    d = datetime.now()
+    new_comment = ItemComments(item_id=item_id, comment=comment_text, date_created=d)
     new_comment.save()
 
     # templates for return value
@@ -762,9 +768,11 @@ def item_add_comment(request, item_id):
     # build return value
     comments = ItemComments.objects.filter(item_id=item_id)
     comments_return = ''
+    settings_time_zone = timezone(settings.TIME_ZONE)
     for row in comments:
         comment_tmp = comment_template.replace('{{comment}}', row.comment)
-        comment_tmp = comment_tmp.replace('{{comment_time}}', get_formatted_date_time(row.date_created))
+        date_created = row.date_created.astimezone(settings_time_zone)
+        comment_tmp = comment_tmp.replace('{{comment_time}}', get_formatted_date_time(date_created))
         comments_return += comment_tmp
 
     return_val = comments_template.replace('{{comments}}', comments_return)
@@ -783,7 +791,7 @@ def check_project_reporting(project_id):
     # go through last N days
     for i in range(days, 0, -1):
 
-        d = datetime.now().date()
+        d = datetime.now()
         d = d - timedelta(days=i)
 
         data = ItemLog.objects.filter(day=d, project_id=project_id)
@@ -823,14 +831,17 @@ def check_project_reporting(project_id):
 
 def get_formatted_date_time(d):
 
+    # remove leading 0 if present
     day = d.strftime('%d')
     if day[0] == '0':
         day = day[1:]
 
+    # remove leading 0 if present
     hour = d.strftime('%I')
     if hour[0] == '0':
         hour = hour[1:]
 
+    # put together the date string with corrected DAY, HOUR values
     return_val = d.strftime('%b DAY, %Y, HOUR:%M%p')
     return_val = return_val.replace('DAY', day)
     return_val = return_val.replace('HOUR', hour)
