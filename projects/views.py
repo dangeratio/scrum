@@ -742,8 +742,7 @@ def item_complete_no_action(request, item_id, action=False):
 def item_add_comment(request, item_id):
 
     # add comment
-    # comment_text = request.POST['comment_text']
-    comment_text = 'asdf'
+    comment_text = request.POST['comment_text']
     d = datetime.now()
     new_comment = ItemComments(item_id=item_id, comment=comment_text, date_created=d)
     new_comment.save()

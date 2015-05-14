@@ -50,11 +50,11 @@ class Item(models.Model):
     LOW, MED_LOW, MED, MED_HIGH, HIGH = 1, 2, 3, 4, 5
 
     PRIORITY_CHOICES = (
-        (LOW, 'Low'),
-        (MED_LOW, 'Medium-Low'),
-        (MED, 'Medium'),
-        (MED_HIGH, 'Medium-High'),
         (HIGH, 'High'),
+        (MED_HIGH, 'Medium-High'),
+        (MED, 'Medium'),
+        (MED_LOW, 'Medium-Low'),
+        (LOW, 'Low'),
     )
 
     NEW, OPEN, IN_PROGRESS, CLOSED_ACTION, CLOSED_NO_ACTION = 1, 2, 3, 4, 5
