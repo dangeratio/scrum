@@ -1,8 +1,12 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, ModelFormMixin, DeleteView
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render_to_response
 from datetime import datetime, timedelta
+
+import random
+
 
 # time stuff
 from django.utils.timezone import make_aware
@@ -111,35 +115,13 @@ class ProjectDetail(DetailView):
         item_logs = get_item_logs(project_id)
         # ************************************************** need to add an order_by and limit the results to the last N
 
-        if 'project_tab' in self.request.session:
-            project_tab = self.request.session['project_tab']
-            if project_tab == 'burn_down':
-                raise DebugMessage('burn_down')
-                # draw_burn_down_chart()
-                pass
-            else:   # project_tab == 'item_completion'
-                '''
-                returned_data = draw_item_completion_chart(project_id, item_logs)
+        chart_burndown_data = json_chart_burndown(project_id)
+        context['chart_burndown_data'] = chart_burndown_data
+        context['chart_burndown_template'] = get_chart_template('burndown')
 
-                context['open_issues_data'] = returned_data['open_issues_data']
-                context['closed_issues_data'] = returned_data['closed_issues_data']
-                context['date_data'] = returned_data['date_data']
-                '''
-
-                data = draw_item_completion_chart(project_id, item_logs)
-                data['project_id'] = project_id
-                context['chart'] = get_ajax_chart('item_completion', data)
-
-        else:
-            # default tab
-
-            self.request.session['project_tab'] = 'item_completion'
-
-            returned_data = draw_item_completion_chart(project_id, item_logs)
-
-            context['open_issues_data'] = returned_data['open_issues_data']
-            context['closed_issues_data'] = returned_data['closed_issues_data']
-            context['date_data'] = returned_data['date_data']
+        chart_item_completion_data = json_chart_item_completion(project_id)
+        context['chart_item_completion_data'] = chart_item_completion_data
+        context['chart_item_completion_template'] = get_chart_template('item_completion')
 
         return context
 
@@ -151,6 +133,7 @@ def get_item_logs(project_id):
     return ItemLog.objects.raw(item_logs_query)
 
 
+# being replaced by json_chart_item_completion
 def draw_item_completion_chart(project_id, item_logs):
         # build data set for the main chart
         open_issues_data = ''
@@ -629,7 +612,6 @@ class ItemUpdate(UpdateView):
         return context
 
 
-
 '''
 def item_delete(request, pk):
     Item.objects.filter(id=pk).delete()
@@ -864,49 +846,6 @@ def get_ajax_chart(chart, data):
     if chart == 'item_completion':
 
         template = '''
-        <div id="chart" class="chart"></div>
-        <script type="text/javascript">
-            $(function () {
-                $('#chart').highcharts({
-                    chart: {
-                        type: 'area',
-                        showAxes: false,
-                    },
-                    title: { text: '' },
-                    plotOptions: {
-                        area: {
-                            stacking: 'normal',
-                            lineColor: '#fff',
-                            lineWidth: 0,
-                            marker: { enabled: false, },
-                            dataLabels: { enabled: false, },
-                        }
-                    },
-                    yAxis: {
-                        title: { text: '' },
-                        labels: { enabled: false, },
-                        gridLineWidth: 0,
-                    },
-                    xAxis: {
-                        title: { text: '' },
-                        labels: { enabled: true, },
-                        tickColor: '#fff',
-                        categories: [{{date_data}}],
-                    },
-                    series: [{
-                        name: 'Pending Issues',
-                        data: [{{open_issues_data}}],
-                        color: '#E75F54',
-                        showInLegend: false,
-                    }, {
-                        name: 'Fixed Issues',
-                        data: [{{closed_issues_data}}],
-                        color: '#336C48',
-                        showInLegend: false,
-                    }]
-                });
-            });
-        </script>
         '''
 
         returned_data = draw_item_completion_chart(data['project_id'], get_item_logs(data['project_id']))
@@ -920,61 +859,7 @@ def get_ajax_chart(chart, data):
     elif chart == 'burndown':
 
         template = '''
-        <div id="chart" class="chart"></div>
-        <script type="text/javascript">
-            $(function () {
-                $('#chart').highcharts({
-                    chart: {
-                        type: 'line',
-                        // showAxes: false,
-                    },
-                    title: { text: '' },
-                    plotOptions: {
-                        line: {
-                            dataLabels: { enabled: false },
-                            enableMouseTracking: false,
-                        }
-                    },
-                    yAxis: {
-                        title: { text: '' },
-                        labels: { enabled: false, },
-                        floor: 0,
-                        gridLineWidth: 0,
-                    },
-                    xAxis: {
-                        title: { text: '' },
-                        labels: { enabled: true, },
-                        tickColor: '#fff',
-                        floor: 0,
-                        // categories: [{{date_data|safe}}],
-                    },
-                    series: [{
-                        name: 'Open Issues',
-                        data: [987, 610, 377, 233, 144, 89, 55, 34, 21, 13, 8, 5, 3, 2, 1, 1, 0],
-                        // data: [{{open_issues_data}}],
-                        color: '#336C48',
-                        showInLegend: false,
-                    }, {
-                        type: 'line',
-                        name: ' ',
-                        showInLegend: false,
-                        data: [[0, 987], [16, 0]],
-                        // data: [[{{trend_line_start}}], [{{trend_line_end}}]]
-                        marker: {
-                            enabled: false
-                        },
-                        states: {
-                            hover: {
-                                lineWidth: 0
-                            }
-                        },
-                        enableMouseTracking: false
-                    }]
-                });
-            });
-        </script>
         '''
-
 
         # return template
         return '<b>[burndown chart here]</b>'
@@ -1011,3 +896,146 @@ def item_complete_action(request, item_id, action=True):
 
     return HttpResponse(content=return_val)
 
+
+def json_chart_burndown(project_id):
+
+    # set the template to use to apply data
+    json_data_template = '''[
+        {
+            "label": "Open Items",
+            "color": "#d62728",
+            "values": [<openvalues>],
+        },
+    ]'''
+
+    item_logs = get_item_logs(project_id)
+
+    '''
+    for log in item_logs:
+        open_issues_data += str(log.total_open) + ','
+        closed_issues_data += str(log.total_closed) + ','
+        date_data += "'" + str(log.day.strftime('%Y-%m-%d 00:00:00')) + "', "
+    '''
+
+    data = json_data_template
+    start_date = datetime.today()
+    values_template = '{ x : <x> , y : <y> },'
+
+    curr_open_values = ''
+    curr_open_data = ''
+
+    for log in item_logs:
+
+        curr_open_values = values_template
+        curr_open_values = curr_open_values.replace('<x>', '"' + str(log.day.strftime('%Y-%m-%d 00:00:00')) + '"')
+        curr_open_values = curr_open_values.replace('<y>', str(log.total_open))
+        curr_open_data += curr_open_values
+
+    data = data.replace("<openvalues>", curr_open_data[:-1])
+
+    return data
+
+def json_chart_item_completion(project_id):
+# def json_chart_item_completion(request, project_id):
+
+    # set the template to use to apply data
+    json_data_template = '''[
+        {
+            "label": "Closed Items",
+            "color": "#2ca02c",
+            "values": [<closedvalues>],
+        },
+        {
+            "label": "Open Items",
+            "color": "#d62728",
+            "values": [<openvalues>],
+        },
+    ]'''
+
+    item_logs = get_item_logs(project_id)
+
+    '''
+    for log in item_logs:
+        open_issues_data += str(log.total_open) + ','
+        closed_issues_data += str(log.total_closed) + ','
+        date_data += "'" + str(log.day.strftime('%Y-%m-%d 00:00:00')) + "', "
+    '''
+
+    data = json_data_template
+    start_date = datetime.today()
+    values_template = '{ x : <x> , y : <y> },'
+
+    curr_open_values = ''
+    curr_closed_values = ''
+    curr_open_data = ''
+    curr_closed_data = ''
+
+    for log in item_logs:
+
+        curr_open_values = values_template
+        curr_open_values = curr_open_values.replace('<x>', '"' + str(log.day.strftime('%Y-%m-%d 00:00:00')) + '"')
+        curr_open_values = curr_open_values.replace('<y>', str(log.total_open))
+        curr_open_data += curr_open_values
+
+        curr_closed_values = values_template
+        curr_closed_values = curr_closed_values.replace('<x>', '"' + str(log.day.strftime('%Y-%m-%d 00:00:00')) + '"')
+        curr_closed_values = curr_closed_values.replace('<y>', str(log.total_closed))
+        curr_closed_data += curr_closed_values
+
+    data = data.replace("<openvalues>", curr_open_data[:-1])
+    data = data.replace("<closedvalues>", curr_closed_data[:-1])
+
+    # raise DebugMessage(data)
+    # return HttpResponse(data, content_type='application/json')
+    return data
+
+
+def get_chart_template(chart):
+
+    if chart == 'item_completion':
+
+        template = '''
+        $(document).ready(function() {
+
+            var data = chart_item_completion_data
+            var chart = new Cartesian("#item_completion_chart");
+            chart.data.isStacked = true;
+            chart.lines.interpolation = chart.areas.interpolation = 'cardinal';
+            chart.areas.visible = true;
+            chart.areas.hasOpacity = true;
+            chart.points.visible = true;
+            chart.draw(data);
+
+            var legend = new Legend("#item_completion_chart_legend");
+            legend.hasOpacity = true;
+            legend.draw(data);
+
+        });
+        '''
+
+    elif chart == 'burndown':
+
+        template = '''
+        $(document).ready(function() {
+
+            var data = chart_burndown_data
+            var chart = new Cartesian("#burndown_chart");
+            chart.data.isStacked = true;
+            chart.lines.interpolation = chart.areas.interpolation = 'cardinal';
+            chart.areas.visible = true;
+            chart.areas.hasOpacity = true;
+            chart.points.visible = true;
+            chart.draw(data);
+
+            var legend = new Legend("#burndown_chart_legend");
+            legend.hasOpacity = true;
+            legend.draw(data);
+
+        });
+        '''
+    else:
+
+        template = ''
+
+    # return template
+    return template

@@ -27,3 +27,8 @@ font-awesome.min.css
 # charts
 
 highcharts.js
+d3.min.js
+nv.d3.min.js
+
+# reference files
+/reference/

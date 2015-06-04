@@ -1,0 +1,12 @@
+{% load static %}
+<link media="all" href="/static/css/nv.d3.min.css' %}" type="text/css" rel="stylesheet" />
+<script src="/static/js/d3.min.js"></script>
+<script src="/static/js/nv.d3.min.js"></script>
+
+{% load nvd3_tags %}
+<head>
+    {% load_chart charttype chartdata "stackedareachart_container" %}
+</head>
+<body>
+    {% include_container "stackedareachart_container" 400 600 %}
+</body>

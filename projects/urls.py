@@ -31,6 +31,11 @@ urlpatterns = patterns('',
     url(r'^(?P<project_id>\d+)/releases/(?P<release_id>\d+)/items/edit/(?P<pk>\d+)$', ItemUpdate.as_view()),
     url(r'^(?P<project_id>\d+)/releases/(?P<release_id>\d+)/items/delete/(?P<pk>\d+)$', ItemDelete.as_view()),
 
+    # json data
+    #
+    url(r'^(?P<project_id>\d+)/json/chart_item_completion/?$', 'projects.views.json_chart_item_completion'),
+    # localhost:8000/json/data/completion/123
+
 )
 
 '''

@@ -43,13 +43,39 @@ function trigger_ajax_chart(tab) {
     });
 }
 
+function hide_all_charts() {
+    $('#item_completion_chart_container').hide();
+    $('#burndown_chart_container').hide();
+}
+
+function trigger_chart_display(tab) {
+
+    // alert('asdf');
+
+    switch (tab) {
+        case 'ic':
+            $('#item_completion_chart_container').show();
+            break;
+
+        case 'bd':
+            $('#burndown_chart_container').show();
+            break;
+
+        case '...':
+            chart_id = '...';
+            break;
+    }
+}
+
 function trigger_tab(tab) {
 
     hide_tabs();
+    hide_all_charts();
 
-    trigger_ajax_chart(tab);
+    // trigger_ajax_chart(tab);
+
+    trigger_chart_display(tab);
 
     select_tab(tab);
 
 }
-

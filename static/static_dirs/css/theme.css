@@ -1,0 +1,213 @@
+/*
+ *  theme.css
+ *  this is the main theme file for bootstrap
+ *
+ */
+
+body.transparent_theme {
+    /*
+    background-image: url("./images/darkgreen.png");
+    background-image: url("./images/darkbluegreen.png");
+    background-image: url("./images/bluewaves.png");
+    background-image: url("./images/circles01.png");
+    background-image: url("./images/splat.png");
+    */
+    background-image: url("./images/lightbluegradient.png");
+    background-size: 100% 100%;
+    background-attachment: fixed;
+}
+
+*::-moz-selection {
+    background: none repeat scroll 0% 0% rgba(255, 255, 255, 0.1);
+}
+
+.highcharts-background {
+    background: none repeat scroll 0% 0% rgba(255, 255, 255, 0.1);
+}
+
+.trans {
+    /* transparent background */
+    background: none repeat scroll 0% 0% rgba(0, 0, 0, 0.30);
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.15);
+
+    /* text color */
+    color: #FFF;
+    text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.4);
+}
+
+/* transparency fixes for bootstrap */
+
+body {
+    color: #fff;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+    background-color: transparent;
+    color: #fff;
+}
+
+a, a:focus, a:hover {
+    color: #c0c0c0;
+}
+
+.list-group-item {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(221, 221, 221, 0.2);
+}
+
+a.list-group-item {
+    color: #fff;
+}
+
+/* panel transparencies */
+
+.panel {
+    background-color : transparent;
+    border: 1px solid rgba(221, 221, 221, 0.2);
+}
+
+.panel-primary > .panel-heading {
+    color: #FFF;
+    background-color: rgba(51,122,183,0.75);
+    border: 1px solid rgba(221, 221, 221, 0.3);
+    background-image: linear-gradient(to bottom, rgba(51,122,183,0.3), rgba(46,109,164,0.3));
+    background-repeat: repeat-x;
+}
+
+.panel-default > .panel-heading {
+    background-image: linear-gradient(to bottom, rgba(245,245,245,0.3), rgba(232,232,232,0.3));
+    background-repeat: repeat-x;
+    color: #fff;
+    background-color: rgba(245,245,245,0.2);
+    border-color: rgba(221,221,221,0.3);
+}
+
+.panel-danger > .panel-heading {
+    background-image: linear-gradient(to bottom, rgba(242,222,222,0.3), rgba(235,204,204,0.3));
+    background-repeat: repeat-x;
+    /* color: #A94442; */
+    color: #fff;
+    background-color: rgba(242,100,100,0.5);
+    border-color: rgba(235,204,209,.5);
+}
+
+.panel-info > .panel-heading {
+    background-image: linear-gradient(to bottom, rgba(217, 237, 247, 0.3), rgba(196, 227, 243, 0.3));
+    background-repeat: repeat-x;
+    color: #fff; /* #31708F */
+    background-color: rgba(217, 237, 247, 0.3);
+    border-color: rgba(188, 232, 241, 0.1);
+}
+
+.panel-warning > .panel-heading {
+    background-image: linear-gradient(to bottom, rgba(252, 248, 227, 0.3), rgba(250, 242, 204, 0.3));
+    background-repeat: repeat-x;
+    /* color: #8A6D3B; */
+    color: #fff;
+    background-color: rgba(252, 215, 55, 0.5);
+    border-color: rgba(250, 235, 204, 0.3);
+}
+
+.panel-success > .panel-heading {
+    background-image: linear-gradient(to bottom, rgba(223, 240, 216, 0.3), rgba(208, 233, 198, 0.3));
+    background-repeat: repeat-x;
+    /* color: #3C763D; */
+    color: #fff;
+    background-color: rgba(100, 240, 100, 0.5);
+    border-color: rgba(214, 233, 198, 0.3);
+}
+
+/* button transparencies */
+
+.btn-default {
+    text-shadow: 0px 1px 0px rgba(204, 204, 204, 0.1);
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(224, 224, 224, 0.2));
+    background-repeat: repeat-x;
+    border-color: rgba(204, 204, 204, 0.2);
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-trans {
+    text-shadow: 0px 1px 0px rgba(204, 204, 204, 0.1);
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(224, 224, 224, 0.5));
+    background-repeat: repeat-x;
+    border-color: rgba(204, 204, 204, 0.2);
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-trans:hover {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(224, 224, 224, 0.5));
+    background-repeat: repeat-x;
+    background-color: rgba(255, 255, 255, 0.4);
+    color: #000;
+}
+
+.btn-success {
+    text-shadow: 0px 1px 0px rgba(204, 204, 204, 0.1);
+    background-image: linear-gradient(to bottom, rgba(92, 184, 92, 0.3), rgba(65, 150, 65, 0.3));
+    background-repeat: repeat-x;
+    border-color: rgba(62, 143, 62, 0.2);
+    color: #fff;
+    background-color: rgba(92, 184, 92, 0.2);
+
+}
+
+.btn-warning {
+    text-shadow: 0px 1px 0px rgba(204, 204, 204, 0.1);
+    background-image: linear-gradient(to bottom, rgba(240, 173, 78, 0.3), rgba(235, 147, 22, 0.3));
+    background-repeat: repeat-x;
+    border-color: rgba(227, 141, 19, 0.2);
+    color: #fff;
+    background-color: rgba(240, 173, 78, 0.2);
+}
+
+.btn-danger {
+    text-shadow: 0px 1px 0px rgba(204, 204, 204, 0.1);
+    background-image: linear-gradient(to bottom, rgba(217, 83, 79, 0.2), rgba(193, 46, 42, 0.2));
+    background-repeat: repeat-x;
+    border-color: rgba(185, 44, 40, 0.2);
+    color: #FFF;
+    background-color: rgba(217, 83, 79, 0.4);
+}
+
+.btn-success:focus, .btn-success:hover, .btn-warning:focus, .btn-warning:hover, .btn-default:focus, .btn-default:hover, .btn-danger:focus, .btn-danger:hover {
+    color: #000;
+    background-image: transparent;
+}
+
+.btn-primary {
+    background-image: linear-gradient(to bottom, rgba(51, 122, 183, 0.3), rgba(38, 90, 136, 0.3));
+    background-repeat: repeat-x;
+    border-color: rgba(36, 85, 128, 0.3);
+    color: #FFF;
+    background-color: rgba(51, 122, 183, 0.3);
+}
+
+/* form transparencies */
+
+textarea {
+    background-color: rgba(245,245,245,0.3);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 5px;
+}
+
+/* charting styles */
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}

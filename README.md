@@ -11,7 +11,9 @@ to use:
 
         python manage.py syncdb
 
-        For the charting functions download highcharts.js from http://code.highcharts.com/
+        For the charting functions download:
+            d3.min.js from http://d3js.org/
+            nv.d3.min.js from https://cdn.rawgit.com/novus/nvd3/v1.7.1/build/nv.d3.min.js
 
         pip install pytz
 

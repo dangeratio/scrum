@@ -4,7 +4,14 @@
 {% block title %}project view{% endblock %}
 
 {% block head %}
-<script src="/static/js/highcharts.js"></script>
+<!-- Load c3.css -->
+<link href="/static/css/c3.min.css" rel="stylesheet" type="text/css">
+<link href="/static/css/peek.css" rel="stylesheet" type="text/css">
+<!-- Load d3.js and c3.js -->
+<script src="/static/js/d3.min.js"></script>
+<script src="/static/js/c3.min.js"></script>
+<script src="/static/js/peek.js"></script>
+<!-- Load page specific js -->
 <script src="/static/js/project_view.js"></script>
 <script type='text/javascript'>
     project_id = {{project.id}};
@@ -34,102 +41,42 @@
     </ul>
 
     <div id="chart_container">
-        {{chart|safe}}
-        <!--
-        <div id="chart" class="chart"></div>
-        <script type="text/javascript">
-            $(function () {
-                $('#chart').highcharts({
-                    chart: {
-                        type: 'area',
-                        showAxes: false,
-                    },
-                    title: { text: '' },
-                    plotOptions: {
-                        area: {
-                            stacking: 'normal',
-                            lineColor: '#fff',
-                            lineWidth: 0,
-                            marker: { enabled: false, },
-                            dataLabels: { enabled: false, },
-                        }
-                    },
-                    yAxis: {
-                        title: { text: '' },
-                        labels: { enabled: false, },
-                        gridLineWidth: 0,
-                    },
-                    xAxis: {
-                        title: { text: '' },
-                        labels: { enabled: true, },
-                        tickColor: '#fff',
-                        categories: [{{date_data|safe}}],
-                    },
-                    series: [{
-                        name: 'Pending Issues',
-                        // data: [0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987],
-                        data: [{{open_issues_data}}],
-                        color: '#E75F54',
-                        showInLegend: false,
-                    }, {
-                        name: 'Fixed Issues',
-                        // data: [0,0,0,1,1,2,3,5,8,13,21,34,55,89,144,233,377],
-                        data: [{{closed_issues_data}}],
-                        color: '#336C48',
-                        showInLegend: false,
-                    }]
-                });
-            });
-        </script>
-        -->
+        <div id="item_completion_chart_container">
+
+            <script>
+
+            var chart_item_completion_data = {{chart_item_completion_data|safe}};
+
+            {{chart_item_completion_template|safe}}
+
+            </script>
+
+            <div id="item_completion_chart"></div>
+            <div id="item_completion_chart_legend"></div>
+
+        </div>
+
+
+        <div id="burndown_chart_container" style="display:none;">
+
+            <script>
+
+            var chart_burndown_data = {{chart_burndown_data|safe}};
+
+            {{chart_burndown_template|safe}}
+
+            </script>
+
+            <div id="burndown_chart"></div>
+            <div id="burndown_chart_legend"></div>
+
+        </div>
     </div>
 </div>
 
 <table border="0" cellpadding="0" cellspacing="0" class="release-details">
 {% for release in releases %}
-<script type="text/javascript">
-    $(function () {
-        Highcharts.getOptions().plotOptions.pie.colors = (function () {
-            return ['#d1e9f5', '#c0c0c0', '#393939'];
-            // return ['#c0c0c0', '#000', '#393939'];
-            // return ['#c0c0c0', '#f0f0f0'];
-        }());
 
-        // Build the chart
-        $('#release_{{release.id}}_container').highcharts({
-            chart: {
-                backgroundColor: '#393939',
-                plotBackgroundColor: null,
-                plotBorderWidth: 0,
-                plotShadow: false
-            },
-            title: { text: '' },
-            tooltip: { pointFormat: '' },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: false,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false,
-                        format: '',
-                        style: {
-                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                        }
-                    }
-                }
-            },
-            series: [{
-                type: 'pie',
-                name: '',
-                data: [
-                    ['Release - Open', {{release.open_items}}],
-                    ['Release - Closed', {{release.closed_items}}],
-                    ['Other Items', ({{project_total_items}} - {{release.open_items}} - {{release.closed_items}})]
-                ]
-            }]
-        });
-    });
-</script>
 <tr><td class="">
 <div class="panel panel-info">
     <a class="list-group-item panel-heading parent-border-hover" href="/projects/{{ project.id }}/releases/{{release.id }}">
@@ -139,14 +86,7 @@
     <div class="list-group-item p-no-margin">{{release.detail|safe|linebreaks }}
     </div>
 
-    <!--
-    <div class="list-group-item p-no-margin">project_id: {{release.project_id }}</div>
-    <div class="list-group-item p-no-margin">project_id_id: {{release.project_id_id }}</div>
-    <div class="list-group-item p-no-margin">id: {{release.id }}</div>
-    //-->
 </div>
-</td><td class="chart">
-    <div id="release_{{release.id}}_container" class="projects-release-chart"></div>
 </td></tr>
 {% endfor %}
 </table>
@@ -155,5 +95,10 @@
 var csrf_token = "{{ csrf_token }}";
 </script>
 <script src="/static/js/item_view.js"></script>
+
+
+<script>
+
+</script>
 
 {% endblock %}

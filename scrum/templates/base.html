@@ -23,12 +23,16 @@
     <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script> //-->
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
+    <!-- my local theme overrides all other themes -->
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+
+
     {% block head %}
 
     {% endblock %}
 
 </head>
-<body>
+<body class="transparent_theme">
 <div id="page">
 <!--
     <div id="title">
