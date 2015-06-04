@@ -13,9 +13,9 @@ to use:
 
         For the charting functions download:
             d3.min.js from http://d3js.org/
-            nv.d3.min.js from https://cdn.rawgit.com/novus/nvd3/v1.7.1/build/nv.d3.min.js
+            peek from https://github.com/mtmacdonald/peek/
 
         pip install pytz
 
-![screenshot of scrum](http://i.imgur.com/GFLnBW5.png)
+![screenshot of scrum](http://i.imgur.com/kDf0PoA.png)
 

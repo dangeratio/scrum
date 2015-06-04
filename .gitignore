@@ -28,7 +28,9 @@ font-awesome.min.css
 
 highcharts.js
 d3.min.js
-nv.d3.min.js
+peek.css
+peek.js
 
 # reference files
 /reference/
+
